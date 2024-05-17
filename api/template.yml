@@ -20,7 +20,7 @@ Globals:
       # # Environment variables used by every function
       # Variables:
       #  SAMPLE_TABLE: !Ref SampleTable
-    Runtime: nodejs14.x
+    Runtime: nodejs18.x
     MemorySize: 128
     Timeout: 100
 
@@ -55,7 +55,7 @@ Resources:
       Description: Runtime dependencies for Lambdas
       ContentUri: ./
       CompatibleRuntimes:
-        - nodejs14.x
+        - nodejs18.x
       RetentionPolicy: Retain
 
 Outputs:
