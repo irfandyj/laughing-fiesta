@@ -3,23 +3,10 @@ import {
   APIGatewayProxyEvent,
   APIGatewayProxyResult
 } from 'aws-lambda';
+import { GetResponse } from '../lib/response';
+import { UserEntity } from '../models/user';
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
-
-interface QueryDto {
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-}
-
-interface GetUserDto {
-  users: User[];
-  query: QueryDto;
-}
+const HOST = "http://localhost:3000"
 
 /**
  * A simple example includes a HTTP get method.
@@ -30,8 +17,8 @@ export const getUsersHandler = async (
   // All log statements are written to CloudWatch
   console.debug('Received event:', event);
 
-  const usersResponse: GetUserDto = {
-    users: [
+  const usersResponse: GetResponse<UserEntity> = {
+    data: [
       {
         id: '1',
         name: 'John Doe',
@@ -43,10 +30,19 @@ export const getUsersHandler = async (
         email: 'jane.doe@fakemail.com'
       }
     ],
-    query: {
+    meta: {
+      totalItems: 2,
       currentPage: 1,
       totalPages: 1,
-      totalItems: 2
+      sortBy: [['name', 'ASC']],
+      limit: 10,
+    },
+    links: {
+      first: `${HOST}/users?limit=10&page=1`,
+      previous: ``,
+      current: `${HOST}/users?limit=10&page=1`,
+      next: ``,
+      last: `${HOST}/users?limit=10&page=1`,
     }
   }
 
