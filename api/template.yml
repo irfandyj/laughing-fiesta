@@ -45,6 +45,20 @@ Resources:
             Path: /
             Method: GET
 
+  GetUsersFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: dist/handlers/users.getUsersHandler
+      Description: A simple example includes a HTTP get method to get all items from a DynamoDB table.
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: GET
+
   # Shared layer with Lambda runtime dependencies
   RuntimeDependenciesLayer:
     Type: AWS::Serverless::LayerVersion
