@@ -83,7 +83,7 @@ export const getRoomsHandler = async (
     const totalPages = Math.ceil(totalDocuments / query.limit);
     const roomsResponse: GetResponse<RoomDto> = {
       data: rooms.map(room => ({
-        id: room.id,
+        id: room._id,
         name: room.name,
         description: room.description,
         users: room.users,
