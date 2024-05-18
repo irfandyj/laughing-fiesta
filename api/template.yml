@@ -43,6 +43,19 @@ Resources:
           Properties:
             Path: /users
             Method: GET
+  PostUsersFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: dist/handlers/users.postUserHandler
+      Description: A simple example includes a HTTP get method to get all items from a DynamoDB table.
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: POST
 
   # Shared layer with Lambda runtime dependencies
   RuntimeDependenciesLayer:
