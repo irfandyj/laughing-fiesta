@@ -5,8 +5,8 @@ import {
 } from 'aws-lambda';
 import { getMongoClient } from '../db/init';
 import { GetResponse } from '../lib/response';
-import { Room } from '../models/room';
-import { ObjectId, Document, Filter } from 'mongodb';
+import { RoomAttrs, RoomDoc, CreateRoomDto } from '../models/room';
+import { ObjectId, Filter } from 'mongodb';
 import { Entities } from '../lib/entitites';
 
 const CLIENT_HOST = "http://localhost:3000"
@@ -16,14 +16,6 @@ interface Query {
   page: number;
   sortBy: [string, 'ASC' | 'DESC'];
   filter: Filter<RoomDoc>;
-}
-
-interface RoomDoc extends Document {
-  id: string;
-  name: string;
-  description: string;
-  users: ObjectId[];
-  messages: ObjectId[];
 }
 
 interface IndexRoomDto {
@@ -127,16 +119,8 @@ export const getRoomsHandler = async (
   }
 }
 
-interface RoomPostBodyRequest extends Partial<Room> {
+interface RoomPostBodyRequest extends Partial<RoomAttrs> {
   name: string;
-}
-
-interface CreateRoomDto {
-  id: string;
-  name: string;
-  description: string;
-  users: ObjectId[];
-  messages: ObjectId[];
 }
 
 export async function postRoomHandler(
@@ -174,12 +158,14 @@ export async function postRoomHandler(
     const { db, closeConnection } = mongoClient;
     console.log("Connection to DB established")
 
-    const roomsCollection = db.collection(Entities.ROOMS);
-    const room: Room = {
+    const roomsCollection = db.collection<RoomDoc>(Entities.ROOMS);
+    const room = {
       name: requestBody?.name,
       description: requestBody.description ? requestBody.description : '',
       users: [],
-      messages: []
+      messages: [],
+      created_at: new Date(),
+      updated_at: null,
     }
 
     console.log("POST /rooms - Inserting a room named " + room.name)
@@ -191,7 +177,9 @@ export async function postRoomHandler(
       name: requestBody.name,
       description: requestBody.description ? requestBody.description : '',
       users: [],
-      messages: []
+      messages: [],
+      created_at: result.insertedId.getTimestamp(),
+      updated_at: null,
     }
     console.log(`POST /rooms - Room ${createRoomResponse.name} created successfully`)
 
