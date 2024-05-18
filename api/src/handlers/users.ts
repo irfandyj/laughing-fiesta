@@ -5,7 +5,7 @@ import {
 } from 'aws-lambda';
 import { getMongoClient } from '../db/init';
 import { GetResponse } from '../lib/response';
-import { UserEntity } from '../models/user';
+import { User } from '../models/user';
 
 const HOST = "http://localhost:3000"
 
@@ -94,12 +94,12 @@ export async function postUserHandler(
     console.log("Connection to DB established")
 
     const usersCollection = db.collection('users');
-    const user: UserEntity = {
+    const user: User = {
       name: requestBody?.name,
       email: requestBody?.email
     }
     const result = await usersCollection.insertOne(user);
-    const userBodyResponse: UserEntity = {
+    const userBodyResponse: User = {
       id: result.insertedId.toString(),
       name: requestBody.name,
       email: requestBody.email
