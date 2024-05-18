@@ -1,4 +1,4 @@
-enum Entities {
+export enum Entities {
   USERS = 'users',
   ROOMS = 'rooms',
   MESSAGES = 'messages',

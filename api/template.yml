@@ -57,6 +57,21 @@ Resources:
             Path: /users
             Method: POST
 
+  # Rooms
+  PostRoomsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: dist/handlers/rooms.postRoomHandler
+      Description: A simple example includes a HTTP get method to get all items from a DynamoDB table.
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /rooms
+            Method: POST
+
   # Shared layer with Lambda runtime dependencies
   RuntimeDependenciesLayer:
     Type: AWS::Serverless::LayerVersion
