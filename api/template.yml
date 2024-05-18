@@ -58,6 +58,19 @@ Resources:
             Method: POST
 
   # Rooms
+  GetRoomsFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: dist/handlers/rooms.getRoomsHandler
+      Description: A simple example includes a HTTP get method to get all items from a DynamoDB table.
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /rooms
+            Method: GET
   PostRoomsFunction:
     Type: AWS::Serverless::Function
     Metadata:
