@@ -1,4 +1,5 @@
 import { Document, ObjectId } from "mongodb";
+import { Query } from "../lib/request";
 
 export interface RoomAttrs {
   name: string;
@@ -17,19 +18,22 @@ export interface RoomDoc extends Document {
 }
 
 /**
- * Data Transfer Objects
+ * Data Transfer Objects - Input
  */
-export interface IndexRoomDto {
-  id: string;
-  name: string;
-  description: string;
-  users: ObjectId[];
-  messages: ObjectId[];
-  created_at: Date;
-  updated_at: Date | null;
+export interface IndexRoomDto extends Query<RoomDoc> {
 }
 
 export interface CreateRoomDto {
+  name: string;
+  description?: string;
+  users: ObjectId[];
+  messages: ObjectId[];
+}
+
+/**
+ * Data Transfer Objects - Output
+ */
+export interface RoomDto {
   id: string;
   name: string;
   description: string;

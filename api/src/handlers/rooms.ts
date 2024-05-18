@@ -4,9 +4,9 @@ import {
   APIGatewayProxyResult
 } from 'aws-lambda';
 import { getMongoClient } from '../db/init';
-import { Query, SORT_ORDER, SortQuery } from '../lib/request';
+import { SORT_ORDER, SortQuery } from '../lib/request';
 import { GetResponse } from '../lib/response';
-import { RoomAttrs, RoomDoc, IndexRoomDto, CreateRoomDto } from '../models/room';
+import { RoomDoc, IndexRoomDto, RoomDto } from '../models/room';
 import { Entities } from '../lib/entitites';
 
 const CLIENT_HOST = "http://localhost:3000"
@@ -31,9 +31,11 @@ export const getRoomsHandler = async (
     }
     const { db, closeConnection } = mongoClient;
 
-    // Are there any queries
+    /**
+     * Checklist IndexRoomDto
+     */
     const qs = event.queryStringParameters;
-    const query: Query<RoomDoc> = {
+    const query: IndexRoomDto = {
       limit: 10,
       page: 1,
       sortBy: ['created_at', SORT_ORDER.DESC],
@@ -79,7 +81,7 @@ export const getRoomsHandler = async (
 
     const totalDocuments = await roomsCollection.countDocuments(query.filter);
     const totalPages = Math.ceil(totalDocuments / query.limit);
-    const roomsResponse: GetResponse<IndexRoomDto> = {
+    const roomsResponse: GetResponse<RoomDto> = {
       data: rooms.map(room => ({
         id: room.id,
         name: room.name,
@@ -120,10 +122,6 @@ export const getRoomsHandler = async (
   }
 }
 
-interface RoomPostBodyRequest extends Partial<RoomAttrs> {
-  name: string;
-}
-
 export async function postRoomHandler(
   event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> {
@@ -138,7 +136,9 @@ export async function postRoomHandler(
   }
 
   // Validates body
-  const requestBody = JSON.parse(event.body) as RoomPostBodyRequest;
+  const requestBody = JSON.parse(event.body);
+  
+  /** Checklist CreateRoomDto */
   if (typeof requestBody.name !== 'string') {
     console.log("400 - POST /rooms - Body is not valid")
     return {
@@ -173,7 +173,7 @@ export async function postRoomHandler(
     const result = await roomsCollection.insertOne(room);
 
     // Preparing response
-    const createRoomResponse: CreateRoomDto = {
+    const createRoomResponse: RoomDto = {
       id: result.insertedId.toString(),
       name: requestBody.name,
       description: requestBody.description ? requestBody.description : '',
