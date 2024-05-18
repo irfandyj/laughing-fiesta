@@ -5,7 +5,7 @@ import {
 } from 'aws-lambda';
 import { getMongoClient } from '../db/init';
 import { GetResponse } from '../lib/response';
-import { RoomAttrs, RoomDoc, CreateRoomDto } from '../models/room';
+import { RoomAttrs, RoomDoc, IndexRoomDto, CreateRoomDto } from '../models/room';
 import { ObjectId, Filter } from 'mongodb';
 import { Entities } from '../lib/entitites';
 
@@ -16,12 +16,6 @@ interface Query {
   page: number;
   sortBy: [string, 'ASC' | 'DESC'];
   filter: Filter<RoomDoc>;
-}
-
-interface IndexRoomDto {
-  id: string;
-  name: string;
-  description: string;
 }
 
 /**
@@ -86,7 +80,11 @@ export const getRoomsHandler = async (
       data: rooms.map(room => ({
         id: room.id,
         name: room.name,
-        description: room.description
+        description: room.description,
+        users: room.users,
+        messages: room.messages,
+        created_at: room.created_at,
+        updated_at: room.updated_at
       })),
       meta: {
         totalItems: totalDocuments,

@@ -16,6 +16,19 @@ export interface RoomDoc extends Document {
   updated_at: Date | null;
 }
 
+/**
+ * Data Transfer Objects
+ */
+export interface IndexRoomDto {
+  id: string;
+  name: string;
+  description: string;
+  users: ObjectId[];
+  messages: ObjectId[];
+  created_at: Date;
+  updated_at: Date | null;
+}
+
 export interface CreateRoomDto {
   id: string;
   name: string;
