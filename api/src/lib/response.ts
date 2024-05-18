@@ -22,7 +22,7 @@ interface GetLinks {
  * Reference to https://www.npmjs.com/package/nestjs-paginate
  */
 export interface GetResponse<T> {
-  data: T[];
+  data: T | T[];
   meta: GetMeta;
   links: GetLinks;
 }

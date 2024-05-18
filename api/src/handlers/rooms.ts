@@ -87,10 +87,7 @@ export const getRoomsHandler = async (
         id: room._id,
         name: room.name,
         description: room.description,
-        users: room.users,
-        messages: room.messages,
         created_at: room.created_at,
-        updated_at: room.updated_at
       })),
       meta: {
         totalItems: totalDocuments,
@@ -238,7 +235,7 @@ export async function postRoomHandler(
     const result = await roomsCollection.insertOne(room);
 
     // Preparing response
-    const createRoomResponse: RoomDto = {
+    const createRoomResponse: RoomDetailsDto = {
       id: result.insertedId.toString(),
       name: requestBody.name,
       description: requestBody.description ? requestBody.description : '',
