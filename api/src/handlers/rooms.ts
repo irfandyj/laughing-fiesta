@@ -4,19 +4,12 @@ import {
   APIGatewayProxyResult
 } from 'aws-lambda';
 import { getMongoClient } from '../db/init';
+import { Query } from '../lib/request';
 import { GetResponse } from '../lib/response';
 import { RoomAttrs, RoomDoc, IndexRoomDto, CreateRoomDto } from '../models/room';
-import { ObjectId, Filter } from 'mongodb';
 import { Entities } from '../lib/entitites';
 
 const CLIENT_HOST = "http://localhost:3000"
-
-interface Query {
-  limit: number;
-  page: number;
-  sortBy: [string, 'ASC' | 'DESC'];
-  filter: Filter<RoomDoc>;
-}
 
 /**
  * A simple example includes a HTTP get method.
@@ -40,7 +33,7 @@ export const getRoomsHandler = async (
 
     // Are there any queries
     const qs = event.queryStringParameters;
-    const query: Query = {
+    const query: Query<RoomDoc> = {
       limit: 10,
       page: 1,
       sortBy: ['name', 'ASC'],
