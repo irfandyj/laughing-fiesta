@@ -82,7 +82,15 @@ export async function postUserHandler(
   }
 
   try {
-    const { db, closeConnection } = await getMongoClient();
+    const mongoClient = await getMongoClient();
+    if (!mongoClient || !mongoClient.db || !mongoClient.closeConnection) {
+      console.log("500 - POST /users - Error connecting to DB")
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Internal Server Error' })
+      };
+    }
+    const { db, closeConnection } = mongoClient;
     console.log("Connection to DB established")
 
     const usersCollection = db.collection('users');
