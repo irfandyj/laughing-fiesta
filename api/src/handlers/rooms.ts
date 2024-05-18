@@ -8,7 +8,8 @@ import { SORT_ORDER, SortQuery } from '../lib/request';
 import { GetResponse } from '../lib/response';
 import { RoomDoc, IndexRoomDto, RoomDto, RoomDetailsDto } from '../models/room';
 import { Entities } from '../lib/entitites';
-import { ObjectId } from 'mongodb';
+import { ObjectId, PushOperator, UpdateFilter } from 'mongodb';
+import { MessageDoc, MessageDto } from '../models/message';
 
 const CLIENT_HOST = "http://localhost:3000"
 
@@ -252,6 +253,128 @@ export async function postRoomHandler(
       body: JSON.stringify(createRoomResponse)
     };
   } catch (e) {
+    console.log(JSON.stringify(e))
+    console.error(e)
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Internal Server Error' })
+    };
+  }
+}
+
+/**
+ * Other related functions with rooms
+ */
+
+/**
+ * Post message to a room
+ */
+export async function postMessageToRoomHandler(
+  event: APIGatewayProxyEvent,
+): Promise<APIGatewayProxyResult> {
+  // All log statements are written to CloudWatch
+  console.debug('Received event:', event);
+  if (event.body === null) {
+    console.log("400 - POST /rooms/{id}/messages - Body is null")
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Bad Request' })
+    };
+  }
+
+  // Validates path parameters
+  if (!event.pathParameters || !event.pathParameters.id) {
+    console.log("400 - POST /rooms/{id}/messages - Room ID is not provided")
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Bad Request' })
+    };
+  }
+  const roomId = event.pathParameters.id;
+
+  // Validates body
+  const requestBody = JSON.parse(event.body);
+  if (typeof requestBody.content !== 'string') {
+    console.log("400 - POST /rooms/{id}/messages - Body is not valid")
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Bad Request' })
+    };
+  }
+
+  try {
+    const mongoClient = await getMongoClient();
+    if (!mongoClient || !mongoClient.db || !mongoClient.closeConnection) {
+      console.log("500 - POST /rooms/{id}/messages - Error connecting to DB")
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Internal Server Error' })
+      };
+    }
+    const { db, closeConnection } = mongoClient;
+
+    const roomsCollection = db.collection<RoomDoc>(Entities.ROOMS);
+    const room = await roomsCollection.findOne({ _id: new ObjectId(roomId) });
+
+    if (!room) {
+      console.log(`404 - POST /rooms/{id}/messages - Room with ID of ${roomId} not found`)
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: 'Not Found' })
+      };
+    }
+
+    // Start validating
+    // Missing future feature:
+    // 1. Message with attachments
+    const message: MessageDoc = {
+      content: requestBody.content,
+      attachments: [], // Should be updated later
+      replies: [],
+      room: room._id,
+      by: new ObjectId("6648ac89fe14b0ec85842eae"), // Hardcoded for now
+      created_at: new Date(),
+      updated_at: null,
+    }
+    const messagesCollection = db.collection<MessageDoc>(Entities.MESSAGES);
+
+    console.log("POST /rooms/{id}/messages - Inserting a message to the collection")
+    const insertMessageResult = await messagesCollection.insertOne(message);
+    
+    console.log("POST /rooms/{id}/messages - Inserting a message to room " + room.name)
+    const updateRoomResult = await roomsCollection.updateOne(
+      { _id: room._id },
+      { $push: { messages: insertMessageResult.insertedId } } as unknown as UpdateFilter<RoomDoc>
+    );
+
+    if (updateRoomResult.modifiedCount === 0) {
+      console.log("500 - POST /rooms/{id}/messages - Error updating room")
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Internal Server Error' })
+      };
+    }
+
+    // Preparing response
+    const createMessageResponse: MessageDto = {
+      id: insertMessageResult.insertedId.toString(),
+      content: requestBody.content,
+      attachments: [],
+      replies: [],
+      room: new ObjectId(roomId),
+      by: new ObjectId("6648ac89fe14b0ec85842eae"), // Hardcoded for now
+      created_at: message.created_at,
+      updated_at: message.updated_at,
+    }
+    console.log(`POST /rooms/{id}/messages - Message created successfully`)
+
+    await closeConnection();
+    return {
+      statusCode: 200,
+      body: JSON.stringify(createMessageResponse)
+    };
+  }
+  catch (e) {
     console.log(JSON.stringify(e))
     console.error(e)
     return {

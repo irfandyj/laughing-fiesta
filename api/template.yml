@@ -98,6 +98,21 @@ Resources:
             Path: /rooms
             Method: POST
 
+  # Post Messages in /rooms route
+  PostRoomMessageFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: dist/handlers/rooms.postMessageToRoomHandler
+      Description: Add message to a a room
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /rooms/{id}/messages
+            Method: POST
+
   # Shared layer with Lambda runtime dependencies
   RuntimeDependenciesLayer:
     Type: AWS::Serverless::LayerVersion
