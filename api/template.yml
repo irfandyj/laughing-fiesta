@@ -71,6 +71,19 @@ Resources:
           Properties:
             Path: /rooms
             Method: GET
+  GetRoomByIdFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Handler: dist/handlers/rooms.showRoomHandler
+      Description: Get room details by room ID from MongoDB database
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /rooms/{id}
+            Method: GET
   PostRoomsFunction:
     Type: AWS::Serverless::Function
     Metadata:

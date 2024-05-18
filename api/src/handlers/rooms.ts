@@ -6,8 +6,9 @@ import {
 import { getMongoClient } from '../db/init';
 import { SORT_ORDER, SortQuery } from '../lib/request';
 import { GetResponse } from '../lib/response';
-import { RoomDoc, IndexRoomDto, RoomDto } from '../models/room';
+import { RoomDoc, IndexRoomDto, RoomDto, RoomDetailsDto } from '../models/room';
 import { Entities } from '../lib/entitites';
+import { ObjectId } from 'mongodb';
 
 const CLIENT_HOST = "http://localhost:3000"
 
@@ -120,6 +121,70 @@ export const getRoomsHandler = async (
       body: JSON.stringify({ message: 'Internal Server Error' })
     };
   }
+}
+
+export async function showRoomHandler(
+  event: APIGatewayProxyEvent,
+): Promise<APIGatewayProxyResult> {
+  // All log statements are written to CloudWatch
+  console.debug('Received event:', event);
+
+  // Validates path parameters
+  if (!event.pathParameters || !event.pathParameters.id) {
+    console.log("400 - GET /rooms - Room ID is not provided")
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Bad Request' })
+    };
+  }
+  const roomId = event.pathParameters.id;
+
+  try {
+    const mongoClient = await getMongoClient();
+    if (!mongoClient || !mongoClient.db || !mongoClient.closeConnection) {
+      console.log("500 - GET /rooms - Error connecting to DB")
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Internal Server Error' })
+      };
+    }
+    const { db, closeConnection } = mongoClient;
+
+    const roomsCollection = db.collection<RoomDoc>(Entities.ROOMS);
+    const room = await roomsCollection.findOne({ _id: new ObjectId(roomId) });
+
+    if (!room) {
+      console.log("404 - GET /rooms - Room not found")
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: 'Not Found' })
+      };
+    }
+
+    const roomResponse: RoomDetailsDto = {
+      id: room._id.toString(),
+      name: room.name,
+      description: room.description,
+      users: room.users,
+      messages: room.messages,
+      created_at: room.created_at,
+      updated_at: room.updated_at
+    }
+
+    await closeConnection();
+    return {
+      statusCode: 200,
+      body: JSON.stringify(roomResponse)
+    };
+  } catch (e) {
+    console.log(JSON.stringify(e))
+    console.error(e)
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Internal Server Error' })
+    };
+  }
+
 }
 
 export async function postRoomHandler(

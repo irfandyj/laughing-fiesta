@@ -42,3 +42,13 @@ export interface RoomDto {
   created_at: Date;
   updated_at: Date | null;
 }
+
+export interface RoomDetailsDto {
+  id: string;
+  name: string;
+  description: string;
+  users: ObjectId[];
+  messages: ObjectId[];
+  created_at: Date;
+  updated_at: Date | null;
+}
