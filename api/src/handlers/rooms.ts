@@ -4,7 +4,7 @@ import {
   APIGatewayProxyResult
 } from 'aws-lambda';
 import { getMongoClient } from '../db/init';
-import { Query } from '../lib/request';
+import { Query, SORT_ORDER, SortQuery } from '../lib/request';
 import { GetResponse } from '../lib/response';
 import { RoomAttrs, RoomDoc, IndexRoomDto, CreateRoomDto } from '../models/room';
 import { Entities } from '../lib/entitites';
@@ -36,21 +36,31 @@ export const getRoomsHandler = async (
     const query: Query<RoomDoc> = {
       limit: 10,
       page: 1,
-      sortBy: ['name', 'ASC'],
+      sortBy: ['created_at', SORT_ORDER.DESC],
       filter: {}
     }
     if (qs) {
       query.limit = qs.limit ? parseInt(qs.limit) : 10;
       query.page = qs.page ? parseInt(qs.page) : 1;
 
-      // Configure this later
-      // query.sortBy = qs.sortBy ? qs.sortBy : ['name', 'ASC']
+      // Sort out sorts
+      if (qs.sortBy) {
+        const sortBy = qs.sortBy.split(",");
+        if (sortBy.length !== 2) {
+          console.log("400 - GET /rooms - sortBy query is invalid")
+          return {
+            statusCode: 400,
+            body: JSON.stringify({ message: 'Bad Request' })
+          };
+        }
+        query.sortBy = sortBy as SortQuery;
+      }
 
       // Filter where name or email contains the query string
       query.filter = qs.filter ? {
         $or: [
           { name: { $regex: qs.filter, $options: 'i' } },
-          { email: { $regex: qs.filter, $options: 'i' } }
+          { description: { $regex: qs.filter, $options: 'i' } }
         ]
       } : {}
     }
