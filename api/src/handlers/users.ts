@@ -91,7 +91,7 @@ export const getUsersHandler = async (
     const totalPages = Math.ceil(totalDocuments / query.limit);
     const usersResponse: GetResponse<User> = {
       data: users.map(user => ({
-        id: user.id,
+        id: user._id,
         name: user.name,
         email: user.email
       })),
