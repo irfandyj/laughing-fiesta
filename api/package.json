@@ -4,6 +4,7 @@
   "description": "api",
   "private": true,
   "dependencies": {
+    "mongodb": "^6.6.2",
     "source-map-support": "^0.5.19"
   },
   "devDependencies": {
@@ -20,5 +21,5 @@
     "build": "node_modules/typescript/bin/tsc",
     "watch": "node_modules/typescript/bin/tsc -w --preserveWatchOutput",
     "test": "jest"
-  } 
+  }
 }
