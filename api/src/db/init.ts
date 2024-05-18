@@ -26,7 +26,11 @@ export async function getMongoClient () {
   try {
     await mongoClient.connect();
     const db = mongoClient.db(DB_NAME);
-    console.log('Connected successfully to server');
+    console.log('Successfully connected to MongoDB Server');
+    if (!db || !mongoClient || !mongoClient.close) {
+      throw new Error(`Connection to ${DB_NAME} database failed`)
+    }
+    console.log(`Successfully connected to ${DB_NAME} database`)
     return {
       db,
       closeConnection: async () => await mongoClient.close()
