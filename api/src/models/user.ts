@@ -1,35 +1,42 @@
-export interface User {
-  id?: string;
+import { Document, ObjectId } from "mongodb";
+import { Query } from "../lib/request";
+import { RoomDoc } from "./room";
+
+export interface UserAttrs {
   name: string;
   email: string;
+  password: string;
+  rooms: ObjectId[];
 }
 
-// export class UserEntity extends Entity {
-//   resource = Entities.USERS;
+export interface UserDoc extends Document {
+  name: string;
+  email: string;
+  password: string;
+  rooms: ObjectId[];
+  created_at: Date;
+  updated_at: Date | null;
+}
 
-//   constructor({ id, name, email }: {
-//     id?: string;
-//     name: string;
-//     email: string;
-//   }) {
-//     super();
-//     this.name = name;
-//     this.email = email;
-//   }
-// }
+/**
+ * Data Transfer Objects - Input
+ */
+export interface IndexUserDto extends Query<UserDoc> {}
 
-// export class UserEntity {
-//   id?: string;
-//   name: string;
-//   email: string;
+export interface CreateUserDto {
+  name: string;
+  email: string;
+  password: string;
+  rooms: ObjectId[];
+}
 
-//   constructor({ id, name, email }: {
-//     id?: string;
-//     name: string;
-//     email: string;
-//   }) {
-//     this.id = id;
-//     this.name = name;
-//     this.email = email;
-//   }
-// }
+/**
+ * Data Transfer Objects - Output
+ */
+export interface UserDto {
+  id: string;
+  name: string;
+  email: string;
+  rooms: ObjectId[] | RoomDoc[];
+  created_at: Date;
+}

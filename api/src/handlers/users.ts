@@ -5,30 +5,11 @@ import {
 } from 'aws-lambda';
 import { getMongoClient } from '../db/init';
 import { GetResponse } from '../lib/response';
-import { User } from '../models/user';
-import { Document, Filter } from 'mongodb';
+import { IndexUserDto, UserDoc, UserDto } from '../models/user';
+import { SORT_ORDER, SortQuery } from '../lib/request';
+import { Entities } from '../lib/entitites';
 
 const CLIENT_HOST = "http://localhost:3000"
-
-interface Query {
-  limit: number;
-  page: number;
-  sortBy: [string, 'ASC' | 'DESC'];
-  filter: Filter<UserDoc>;
-}
-
-interface QueryDto<T> {
-  limit?: string;
-  page?: string;
-  sortBy?: string[];
-  filter?: string;
-}
-
-interface UserDoc extends Document {
-  id: string;
-  name: string;
-  email: string;
-}
 
 /**
  * A simple example includes a HTTP get method.
@@ -52,19 +33,28 @@ export const getUsersHandler = async (
 
     // Are there any queries
     const qs = event.queryStringParameters;
-    const query: Query = {
+    const query: IndexUserDto = {
       limit: 10,
       page: 1,
-      sortBy: ['name', 'ASC'],
+      sortBy: ['created_at', SORT_ORDER.DESC],
       filter: {}
     }
     if (qs) {
       query.limit = qs.limit ? parseInt(qs.limit) : 10;
       query.page = qs.page ? parseInt(qs.page) : 1;
 
-      // Sort by name or email
-      // Configure this later
-      // query.sortBy = qs.sortBy ? qs.sortBy : ['name', 'ASC']
+      // Allowed sorts should be name, email, created_at
+      if (qs.sortBy) {
+        const sortBy = qs.sortBy.split(",");
+        if (sortBy.length !== 2) {
+          console.log("400 - GET /rooms - sortBy query is invalid")
+          return {
+            statusCode: 400,
+            body: JSON.stringify({ message: 'Bad Request' })
+          };
+        }
+        query.sortBy = sortBy as SortQuery;
+      }
 
       // Filter where name or email contains the query string
       query.filter = qs.filter ? {
@@ -76,7 +66,7 @@ export const getUsersHandler = async (
     }
 
     // Get the users collection
-    const usersCollection = db.collection<UserDoc>('users');
+    const usersCollection = db.collection<UserDoc>(Entities.USERS);
 
     // Get all users
     const users = await usersCollection.find<UserDoc>(query.filter, {
@@ -89,11 +79,13 @@ export const getUsersHandler = async (
 
     const totalDocuments = await usersCollection.countDocuments(query.filter);
     const totalPages = Math.ceil(totalDocuments / query.limit);
-    const usersResponse: GetResponse<User> = {
+    const usersResponse: GetResponse<UserDto> = {
       data: users.map(user => ({
         id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        rooms: user.rooms,
+        created_at: user.created_at
       })),
       meta: {
         totalItems: totalDocuments,
@@ -126,11 +118,6 @@ export const getUsersHandler = async (
   }
 }
 
-interface UserPostBodyRequest {
-  name: string;
-  email: string;
-}
-
 export async function postUserHandler(
   event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> {
@@ -145,8 +132,16 @@ export async function postUserHandler(
   }
 
   // Validates body
-  const requestBody = JSON.parse(event.body) as UserPostBodyRequest;
-  if (typeof requestBody.name !== 'string' || typeof requestBody.email !== 'string') {
+  const requestBody = JSON.parse(event.body);
+
+  /**
+   * Should checklist the body based on `CreateUserDto`
+   */
+  if (
+    typeof requestBody.name !== 'string' ||
+    typeof requestBody.email !== 'string' ||
+    typeof requestBody.password !== 'string'
+  ) {
     console.log("400 - POST /users - Body is not valid")
     return {
       statusCode: 400,
@@ -166,16 +161,22 @@ export async function postUserHandler(
     const { db, closeConnection } = mongoClient;
     console.log("Connection to DB established")
 
-    const usersCollection = db.collection('users');
-    const user: User = {
+    const usersCollection = db.collection<UserDoc>('users');
+    const user = {
       name: requestBody?.name,
-      email: requestBody?.email
+      email: requestBody?.email,
+      password: 'randompass',
+      rooms: [], // Should join the default room
+      created_at: new Date(),
+      updated_at: null
     }
     const result = await usersCollection.insertOne(user);
-    const userBodyResponse: User = {
+    const userBodyResponse: UserDto = {
       id: result.insertedId.toString(),
       name: requestBody.name,
-      email: requestBody.email
+      email: requestBody.email,
+      rooms: [],
+      created_at: user.created_at
     }
     await closeConnection();
     return {

@@ -69,10 +69,10 @@ export const getRoomsHandler = async (
       } : {}
     }
 
-    // Get the users collection
+    // Get the rooms collection
     const roomsCollection = db.collection<RoomDoc>(Entities.ROOMS);
 
-    // Get all users
+    // Get all rooms
     const rooms = await roomsCollection.find<RoomDoc>(query.filter, {
       limit: query.limit,
       skip: (query.page - 1) * query.limit,

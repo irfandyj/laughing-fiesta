@@ -1,5 +1,6 @@
 import { Document, ObjectId } from "mongodb";
 import { Query } from "../lib/request";
+import { MessageDoc } from "./message";
 
 export interface RoomAttrs {
   name: string;
@@ -45,7 +46,7 @@ export interface RoomDetailsDto {
   name: string;
   description: string;
   users: ObjectId[];
-  messages: ObjectId[];
+  messages: ObjectId[] | MessageDoc[];
   created_at: Date;
   updated_at: Date | null;
 }
