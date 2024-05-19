@@ -57,6 +57,7 @@ export async function generateJwtToken(payload: JwtPayload): Promise<string> {
  */
 export async function verifyJwtToken(token: string): Promise<JwtPayload> {
   return new Promise((resolve, reject) => {
+    console.log("Verifying token ...")
     jwt.verify(token, JWT_SECRET, function (err, decoded) {
       if (err) reject(err);
       if (decoded) {
@@ -68,6 +69,10 @@ export async function verifyJwtToken(token: string): Promise<JwtPayload> {
           typeof decoded.name === 'string' &&
           typeof decoded.email === 'string'
         ) {
+          console.log("Token decoded!")
+          console.log("Sub: ", decoded.sub)
+          console.log("Name: ", decoded.name)
+          console.log("Email: ", decoded.email)
           resolve(new JwtPayload(decoded as JwtPayload))
         }
       }
