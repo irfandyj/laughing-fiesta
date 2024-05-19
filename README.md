@@ -6,3 +6,7 @@
 5. Copy the IP Address and replace a variable `DB_HOST` in `api/src/db/init.js`
 6. Start the SAM app by going to `api` folder
 7. Run `sam local start-api --docker-network infra_default`
+
+
+# References
+1. [npm link](https://medium.com/@jophin.joseph88/npm-link-2f35c7e1ac33)
