@@ -6,7 +6,8 @@ import {
 import { getMongoClient } from '../db/init';
 import { UserDoc, UserDto } from '../models/user';
 import { Entities } from '../lib/entitites';
-import { hash } from '../lib/authentication';
+import { generateJwtToken, hash } from '../lib/authentication';
+import { UserSignUpDto } from '../models/authentication';
 
 
 /**
@@ -84,12 +85,18 @@ export const signUpHandler = async (
     }
     const result = await usersCollection.insertOne(newUser);
 
-    const signUpResponse: UserDto = {
-      id: result.insertedId.toHexString(),
+    const token = await generateJwtToken({
+      sub: result.insertedId.toString(),
+      name: newUser.name,
+      email: newUser.email
+    })
+    const signUpResponse: UserSignUpDto = {
+      id: result.insertedId.toString(),
       name: newUser.name,
       email: newUser.email,
       rooms: [],
-      created_at: newUser.created_at
+      created_at: newUser.created_at,
+      token: token
     }
     
     await closeConnection();
