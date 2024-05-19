@@ -6,6 +6,7 @@ export default defineConfig({
   },
   routes: [
     { path: '/', component: '@/pages/HomePage/index' },
+    { path: '/rooms/:id', component: '@/pages/RoomDetailPage/index' },
     { path: '/signup', component: '@/pages/SignUpPage/index' },
     { path: '/signin', component: '@/pages/SignInPage/index' },
   ],
