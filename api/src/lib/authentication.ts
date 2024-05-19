@@ -64,11 +64,11 @@ export async function verifyJwtToken(token: string): Promise<JwtPayload> {
         // Check each property of `JwtPayload`
         if (
           typeof decoded === 'object' &&
-          typeof decoded.id === 'string' &&
+          typeof decoded.sub === 'string' &&
           typeof decoded.name === 'string' &&
           typeof decoded.email === 'string'
         ) {
-          resolve(decoded as JwtPayload)
+          resolve(new JwtPayload(decoded as JwtPayload))
         }
       }
       reject(new Error('Failed to verify token'));
