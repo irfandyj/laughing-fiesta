@@ -26,9 +26,9 @@ import { UserSignUpDto } from '../models/authentication';
 /**
  * A simple example includes a HTTP get method.
  */
-export const signUpHandler = async (
+export async function signUpHandler (
   event: APIGatewayProxyEvent,
-): Promise<APIGatewayProxyResult> => {
+): Promise<APIGatewayProxyResult> {
   // All log statements are written to CloudWatch
   console.debug('Received event:', event);
   if (event.body === null) {
