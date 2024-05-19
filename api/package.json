@@ -4,6 +4,7 @@
   "description": "api",
   "private": true,
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "mongodb": "^6.6.2",
     "source-map-support": "^0.5.19"
   },

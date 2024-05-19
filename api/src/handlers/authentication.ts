@@ -6,6 +6,7 @@ import {
 import { getMongoClient } from '../db/init';
 import { UserDoc, UserDto } from '../models/user';
 import { Entities } from '../lib/entitites';
+import { hash } from '../lib/authentication';
 
 /**
  * A simple example includes a HTTP get method.
@@ -58,10 +59,12 @@ export const signUpHandler = async (
     }
 
     // Create the user
+    // Hashing password
+    const hashedPassword = await hash(body.password);
     const newUser = {
       name: body.name,
       email: body.email,
-      password: body.password,
+      password: hashedPassword,
       rooms: [],
       created_at: new Date(),
       updated_at: null
