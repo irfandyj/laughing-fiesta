@@ -16,8 +16,8 @@ export interface SignInDto {
 }
 /**
  * Data Transfer Objects - Output
- */
-export interface UserSignUpDto {
+*/
+export interface UserAuthenticationDto {
   id: string;
   name: string;
   email: string;

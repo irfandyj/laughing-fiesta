@@ -7,7 +7,7 @@ import { getMongoClient } from '../db/init';
 import { UserDoc } from '../models/user';
 import { Entities } from '../lib/entitites';
 import { compare, generateJwtToken, hash } from '../lib/authentication';
-import { SignInDto, UserSignupDto } from '../models/authentication';
+import { SignInDto, UserAuthenticationDto } from '../models/authentication';
 
 
 /**
@@ -91,7 +91,7 @@ export async function signUpHandler (
       name: newUser.name,
       email: newUser.email
     })
-    const signUpResponse: UserSignupDto = {
+    const signUpResponse: UserAuthenticationDto = {
       id: result.insertedId.toString(),
       name: newUser.name,
       email: newUser.email,
@@ -182,7 +182,7 @@ export async function signInHandler (
       name: foundUser.name,
       email: foundUser.email
     })
-    const signInResponse: UserSignupDto = {
+    const signInResponse: UserAuthenticationDto = {
       id: foundUser._id.toString(),
       name: foundUser.name,
       email: foundUser.email,
