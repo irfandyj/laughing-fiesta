@@ -1,3 +1,4 @@
+import { Link } from 'umi';
 import { Layout } from 'antd';
 import type { FormProps } from 'antd';
 import { Card, Button, Form, Input } from 'antd';
@@ -53,6 +54,12 @@ export default function SignInPage() {
             </Button>
           </Form.Item>
         </Form>
+
+        <div className='SignInPage__links'>
+          <Link to="/forgot-password">Forgot password?</Link>
+          <Link to="/signup">To sign up page</Link>
+        </div>
+
       </Card>
 
     </Layout>

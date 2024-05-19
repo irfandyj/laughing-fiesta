@@ -15,3 +15,8 @@
     padding: 1rem;
   }
 }
+
+.SignInPage__links {
+  display: flex;
+  justify-content: space-between;
+}

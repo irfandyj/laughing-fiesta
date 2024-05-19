@@ -15,3 +15,8 @@
     padding: 1rem;
   }
 }
+
+.SignUpPage__links {
+  display: flex;
+  justify-content: space-between;
+}
