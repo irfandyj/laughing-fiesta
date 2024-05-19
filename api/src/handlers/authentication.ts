@@ -8,6 +8,19 @@ import { UserDoc, UserDto } from '../models/user';
 import { Entities } from '../lib/entitites';
 import { hash } from '../lib/authentication';
 
+
+/**
+ * Notes to self, The Sign Up Flow:
+ * 1. [x] User input name, email, password
+ * 2. [-] (Partial) We validate input, whether the property exist, character length, etc
+ * 3. [x] Check if the user already exists
+ * 4. [x] If not, we hash the password
+ * 5. User join a default room (which is going to be created by a `Room` seed later)
+ * 6. [x] We create the user
+ * 7. Create a JWT Token
+ * 8. Return the user and the token
+ */
+
 /**
  * A simple example includes a HTTP get method.
  */
