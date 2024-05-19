@@ -32,9 +32,7 @@ const RoomDetailPage = () => {
           </Header>
           <Content className="flex flex-col flex-grow-1">
             {/* Chat Container */}
-            <div className="flex-grow-1">
-              <RoomDetailPageMessageView />
-            </div>
+            <RoomDetailPageMessageView />
             {/* Input */}
             <RoomDetailPageMessageInput />
           </Content>
