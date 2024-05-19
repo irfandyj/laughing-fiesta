@@ -1,0 +1,17 @@
+.SignInPage {}
+@media screen and (max-width: 576px) {
+  .SignInPage {
+    padding: 1rem;
+  }
+}
+
+.SignInPage__card {
+  width: 30rem;
+}
+
+@media screen and (max-width: 576px) {
+  .SignInPage__card {
+    width: 100%;
+    padding: 1rem;
+  }
+}
