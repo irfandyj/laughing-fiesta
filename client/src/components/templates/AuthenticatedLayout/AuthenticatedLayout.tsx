@@ -32,13 +32,11 @@ const App: React.FC = (props) => {
           )}
         />
       </Sider>
-      <Layout>
-        {/* <Header className="site-layout-sub-header-background" style={{ padding: 0 }} /> */}
-        <Content>
-          {children}
-        </Content>
-        {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer> */}
-      </Layout>
+      {/* <Header className="site-layout-sub-header-background" style={{ padding: 0 }} /> */}
+      <Content>
+        {children}
+      </Content>
+      {/* <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer> */}
     </Layout>
   );
 }
