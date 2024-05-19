@@ -29,11 +29,17 @@ export function compare(password: string, hash: string): Promise<boolean> {
  */
 const JWT_SECRET = "secret";
 
-interface JwtPayload {
+export class JwtPayload {
   sub: string;
   name: string;
   email: string;
+  constructor({ sub, name, email }: { sub: string, name: string, email: string }) {
+    this.sub = sub;
+    this.name = name;
+    this.email = email;
+  }
 }
+
 export async function generateJwtToken(payload: JwtPayload): Promise<string> {
   return new Promise((resolve, reject) => {
     jwt.sign(payload, JWT_SECRET, function (err, token) {
