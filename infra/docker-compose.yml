@@ -11,6 +11,7 @@ services:
     ports:
       - 27017:27017
 
+  # Here should be where the mongo-lambda app is deployed
   # mongo-express:
   #   image: mongo-express
   #   restart: always
@@ -21,3 +22,7 @@ services:
   #     ME_CONFIG_MONGODB_ADMINPASSWORD: example
   #     ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
   #     ME_CONFIG_BASICAUTH: false
+
+  # Websocket
+
+  # Client
