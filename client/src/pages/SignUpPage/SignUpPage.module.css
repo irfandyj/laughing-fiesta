@@ -1,0 +1,17 @@
+.SignUpPage {}
+@media screen and (max-width: 576px) {
+  .SignUpPage {
+    padding: 1rem;
+  }
+}
+
+.SignUpPage__card {
+  width: 30rem;
+}
+
+@media screen and (max-width: 576px) {
+  .SignUpPage__card {
+    width: 100%;
+    padding: 1rem;
+  }
+}
