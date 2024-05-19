@@ -5,6 +5,7 @@ import { useParams } from "umi";
 import './RoomDetailPage.module.css'
 import RoomDetailPageMessageInput from "@/components/organisms/RoomDetailPageMessageInput";
 import RoomDetailPageMessageView from "@/components/organisms/RoomDetailPageMessageView";
+import RoomDetailPageMemberList from "@/components/organisms/RoomDetailPageMemberList";
 
 const { Header, Content, Sider } = Layout;
 const { useBreakpoint } = Grid;
@@ -41,12 +42,7 @@ const RoomDetailPage = () => {
 
         {screens.lg ? (
           <Sider>
-            <h1>Members</h1>
-            <ul>
-              <li>Member 1</li>
-              <li>Member 2</li>
-              <li>Member 3</li>
-            </ul>
+            <RoomDetailPageMemberList></RoomDetailPageMemberList>
           </Sider>
         ) : null}
       </Layout>
