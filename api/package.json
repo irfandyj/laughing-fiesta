@@ -24,6 +24,7 @@
     "build": "node_modules/typescript/bin/tsc",
     "watch": "node_modules/typescript/bin/tsc -w --preserveWatchOutput",
     "test": "jest",
-    "db:empty": "tsc src/db/empty-db.ts --outDir dist && node dist/db/empty-db.js"
+    "db:empty": "tsc src/db/empty-db.ts --outDir dist && node dist/db/empty-db.js",
+    "db:seed": "tsc src/db/init.seeder.ts --outDir dist && node dist/db/init.seeder.js"
   }
 }
