@@ -20,6 +20,7 @@ import { UserSignUpDto } from '../models/authentication';
  * 6. [x] We create the user
  * 7. [x] Create a JWT Token
  * 8. [x] Return the user and the token
+ * 9. [ ] Idk where to put this yet, but user should be allowed to join websocket after this
  */
 
 /**
