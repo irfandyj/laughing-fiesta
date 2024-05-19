@@ -4,7 +4,7 @@ import {
   APIGatewayProxyResult
 } from 'aws-lambda';
 import { getMongoClient } from '../db/init';
-import { UserDoc, UserDto } from '../models/user';
+import { UserDoc } from '../models/user';
 import { Entities } from '../lib/entitites';
 import { generateJwtToken, hash } from '../lib/authentication';
 import { UserSignUpDto } from '../models/authentication';
