@@ -5,12 +5,10 @@ export default defineConfig({
     type: 'none',
   },
   routes: [
-    { path: '/', component: '@/pages/index' },
+    { path: '/', component: '@/pages/HomePage/index' },
     { path: '/signup', component: '@/pages/SignUpPage/index' },
     { path: '/signin', component: '@/pages/SignInPage/index' },
   ],
   fastRefresh: {},
-  plugins: [
-    '@umijs/plugins/dist/antd'
-  ]
+  plugins: []
 });
