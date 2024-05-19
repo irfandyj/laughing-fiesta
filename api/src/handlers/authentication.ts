@@ -18,8 +18,8 @@ import { UserSignUpDto } from '../models/authentication';
  * 4. [x] If not, we hash the password
  * 5. User join a default room (which is going to be created by a `Room` seed later)
  * 6. [x] We create the user
- * 7. Create a JWT Token
- * 8. Return the user and the token
+ * 7. [x] Create a JWT Token
+ * 8. [x] Return the user and the token
  */
 
 /**
