@@ -10,4 +10,7 @@ export default defineConfig({
     { path: '/signin', component: '@/pages/SignInPage/index' },
   ],
   fastRefresh: {},
+  plugins: [
+    '@umijs/plugins/dist/antd'
+  ]
 });
