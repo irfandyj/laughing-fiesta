@@ -1,4 +1,5 @@
 import { Document, ObjectId } from "mongodb";
+import { UserDoc } from "./user";
 
 export interface MessageAttrs {
   content: string;
@@ -31,7 +32,7 @@ export interface MessageDto {
   attachments: string[];
   replies: ObjectId[]; // MessageDoc[]
   room: ObjectId; // RoomDoc
-  by: ObjectId; // UserDoc
+  by: ObjectId | Partial<UserDoc>; // UserDoc
   created_at: Date;
   updated_at: Date | null;
 }

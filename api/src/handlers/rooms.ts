@@ -10,6 +10,7 @@ import { RoomDoc, IndexRoomDto, RoomDto, RoomDetailsDto } from '../models/room';
 import { Entities } from '../lib/entitites';
 import { ObjectId, PushOperator, UpdateFilter } from 'mongodb';
 import { MessageDoc, MessageDto } from '../models/message';
+import { JwtPayload, jwtAuthenticationMiddleware } from '../lib/authentication';
 
 const CLIENT_HOST = "http://localhost:3000"
 
@@ -274,6 +275,12 @@ export async function postMessageToRoomHandler(
 ): Promise<APIGatewayProxyResult> {
   // All log statements are written to CloudWatch
   console.debug('Received event:', event);
+
+  // Authenticate using JWT in `Authorization` header
+  const jwtAuthResult = await jwtAuthenticationMiddleware(event);
+  const isNotJwtPayload = !(jwtAuthResult instanceof JwtPayload);
+  if (isNotJwtPayload) return jwtAuthResult as APIGatewayProxyResult;
+
   if (event.body === null) {
     console.log("400 - POST /rooms/{id}/messages - Body is null")
     return {
@@ -332,7 +339,7 @@ export async function postMessageToRoomHandler(
       attachments: [], // Should be updated later
       replies: [],
       room: room._id,
-      by: new ObjectId("6648ac89fe14b0ec85842eae"), // Hardcoded for now
+      by: new ObjectId(jwtAuthResult.sub),
       created_at: new Date(),
       updated_at: null,
     }
@@ -362,7 +369,11 @@ export async function postMessageToRoomHandler(
       attachments: [],
       replies: [],
       room: new ObjectId(roomId),
-      by: new ObjectId("6648ac89fe14b0ec85842eae"), // Hardcoded for now
+      by: {
+        id: jwtAuthResult.sub,
+        name: jwtAuthResult.name,
+        email: jwtAuthResult.email
+      },
       created_at: message.created_at,
       updated_at: message.updated_at,
     }
