@@ -1,3 +1,4 @@
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import jwt from 'jsonwebtoken';
 const bcrypt = require('bcrypt');
 
@@ -79,4 +80,21 @@ export async function verifyJwtToken(token: string): Promise<JwtPayload> {
       reject(new Error('Failed to verify token'));
     });
   });
+}
+
+/**
+ * Extracts the JWT token from the `Authorization` header
+ */
+export async function jwtAuthenticationMiddleware(
+  event: APIGatewayProxyEvent
+): Promise<JwtPayload | APIGatewayProxyResult> {
+  if (!event.headers.Authorization) {
+    console.log("401 - POST /rooms/{id}/messages - Unauthorized")
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ message: 'Unauthorized' })
+    };
+  }
+  const token = event.headers.Authorization.replace('Bearer ', '');
+  return verifyJwtToken(token);
 }
