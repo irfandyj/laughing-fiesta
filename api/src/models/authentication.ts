@@ -10,6 +10,10 @@ export interface SignUpDto {
   password: string;
 }
 
+export interface SignInDto {
+  email: string;
+  password: string;
+}
 /**
  * Data Transfer Objects - Output
  */

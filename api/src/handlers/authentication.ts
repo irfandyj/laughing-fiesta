@@ -6,8 +6,8 @@ import {
 import { getMongoClient } from '../db/init';
 import { UserDoc } from '../models/user';
 import { Entities } from '../lib/entitites';
-import { generateJwtToken, hash } from '../lib/authentication';
-import { UserSignUpDto } from '../models/authentication';
+import { compare, generateJwtToken, hash } from '../lib/authentication';
+import { SignInDto, UserSignupDto } from '../models/authentication';
 
 
 /**
@@ -91,7 +91,7 @@ export async function signUpHandler (
       name: newUser.name,
       email: newUser.email
     })
-    const signUpResponse: UserSignUpDto = {
+    const signUpResponse: UserSignupDto = {
       id: result.insertedId.toString(),
       name: newUser.name,
       email: newUser.email,
@@ -106,6 +106,98 @@ export async function signUpHandler (
       body: JSON.stringify(signUpResponse)
     };
   } catch (e) {
+    console.log(JSON.stringify(e))
+    console.error(e)
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Internal Server Error' })
+    };
+  }
+}
+
+export async function signInHandler (
+  event: APIGatewayProxyEvent,
+): Promise<APIGatewayProxyResult> {
+  // All log statements are written to CloudWatch
+  console.debug('Received event:', event);
+  if (event.body === null) {
+    console.log("400 - POST /rooms - Body is null")
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Bad Request' })
+    };
+  }
+
+  // Validates body
+  const body = JSON.parse(event.body);
+
+  /** Checklist based on SignInDto */
+  if (!body.email || !body.password) {
+    console.log("400 - POST /users - Missing required fields")
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Bad Request' })
+    };
+  }
+
+  const userSignInData: SignInDto = {
+    email: body.email,
+    password: body.password
+  }
+
+  try {
+    const mongoClient = await getMongoClient();
+    if (!mongoClient || !mongoClient.db || !mongoClient.closeConnection) {
+      console.log("500 - GET /users - Error connecting to DB")
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Internal Server Error' })
+      };
+    }
+    const { db, closeConnection } = mongoClient;
+
+    // Get the users collection
+    const usersCollection = db.collection<UserDoc>(Entities.USERS);
+    const foundUser = await usersCollection.findOne({ email: userSignInData.email });
+    if (!foundUser) {
+      console.log("404 - POST /users - User not found")
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: 'Not Found' })
+      };
+    }
+
+    // Check password
+    const isPasswordMatch = await compare(userSignInData.password, foundUser.password);
+    if (!isPasswordMatch) {
+      console.log("401 - POST /users - Password not match")
+      return {
+        statusCode: 401,
+        body: JSON.stringify({ message: 'Unauthorized' })
+      };
+    }
+
+    const token = await generateJwtToken({
+      sub: foundUser._id.toString(),
+      name: foundUser.name,
+      email: foundUser.email
+    })
+    const signInResponse: UserSignupDto = {
+      id: foundUser._id.toString(),
+      name: foundUser.name,
+      email: foundUser.email,
+      rooms: foundUser.rooms,
+      created_at: foundUser.created_at,
+      token: token
+    }
+    
+    await closeConnection();
+    return {
+      statusCode: 200,
+      body: JSON.stringify(signInResponse)
+    };
+  }
+  catch (e) {
     console.log(JSON.stringify(e))
     console.error(e)
     return {
