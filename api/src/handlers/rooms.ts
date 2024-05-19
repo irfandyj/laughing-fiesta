@@ -8,7 +8,7 @@ import { SORT_ORDER, SortQuery } from '../lib/request';
 import { GetResponse } from '../lib/response';
 import { RoomDoc, IndexRoomDto, RoomDto, RoomDetailsDto } from '../models/room';
 import { Entities } from '../lib/entitites';
-import { ObjectId, PushOperator, UpdateFilter } from 'mongodb';
+import { ObjectId, UpdateFilter } from 'mongodb';
 import { MessageDoc, MessageDto } from '../models/message';
 import { JwtPayload, jwtAuthenticationMiddleware } from '../lib/authentication';
 
