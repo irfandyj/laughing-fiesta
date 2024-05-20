@@ -5,6 +5,7 @@ import { Card, Button, Form, Input } from 'antd';
 import 'antd-css-utilities/utility.min.css';
 import './SignUpPage.module.css'
 import { signUpFormFlow } from './SignUpPage.api';
+import { Routes } from '@/routes/routes';
 
 type FieldType = {
   username: string;
@@ -23,7 +24,7 @@ export default function SignUpPage() {
       if (!signUpRes) throw new Error("Sign up failed")
 
       // Redirect to home page
-      history.push('/');
+      history.push(Routes.HOME.replace(':username', signUpRes.data.username));
     } catch (e) {
       console.error(e);
     }
