@@ -26,11 +26,21 @@ const ProfileModel: ProfileModelType = {
      */
     [PROFILE_REDUCERS.SET_INDEX_PROFILE](state, action) {
       const currentState = { ...state } as ProfileModelState;
+      // I think when changing profile, you should replace the axios token here too.
+      // Replacing it here only changes the one in the tab opened.
       return {
         currentChosenIndexProfile: action.payload,
         profiles: currentState.profiles,
       };
     },
+
+    /**
+     * [WIP] Set the current profiles
+     * Useful for:
+     * 1. Updating tokens
+     * 2. Saving the new token to LocalStorage
+     * 3. (Maybe) websocket related functions
+     */
 
     /**
      * Replace the current profiles with the new `payload`
