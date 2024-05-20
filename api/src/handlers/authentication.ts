@@ -8,7 +8,12 @@ import { UserDoc } from 'gigradar-commons/build/dtos/user';
 import { Entities } from '../lib/entitites';
 import { compare, generateJwtToken, hash } from '../lib/authentication';
 import { SignInDto, UserAuthenticationDto } from 'gigradar-commons/build/dtos/authentication';
+// import { Endpoints } from 'gigradar-commons/build/constants/endpoints';
 
+enum Endpoints {
+  SIGN_UP = 'signup',
+  SIGN_IN = 'signin'
+}
 
 /**
  * Notes to self, The Sign Up Flow:
@@ -26,13 +31,13 @@ import { SignInDto, UserAuthenticationDto } from 'gigradar-commons/build/dtos/au
 /**
  * A simple example includes a HTTP get method.
  */
-export async function signUpHandler (
+export async function signUpHandler(
   event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> {
   // All log statements are written to CloudWatch
   console.debug('Received event:', event);
   if (event.body === null) {
-    console.log("400 - POST /rooms - Body is null")
+    console.log(`400 - POST /${Endpoints.SIGN_UP} - Body is null`)
     return {
       statusCode: 400,
       body: JSON.stringify({ message: 'Bad Request' })
@@ -44,7 +49,7 @@ export async function signUpHandler (
 
   /** Checklist based on SignUpDto */
   if (!body.name || !body.email || !body.password) {
-    console.log("400 - POST /users - Missing required fields")
+    console.log(`400 - POST /${Endpoints.SIGN_UP} - Missing required fields`)
     return {
       statusCode: 400,
       body: JSON.stringify({ message: 'Bad Request' })
@@ -54,7 +59,7 @@ export async function signUpHandler (
   try {
     const mongoClient = await getMongoClient();
     if (!mongoClient || !mongoClient.db || !mongoClient.closeConnection) {
-      console.log("500 - GET /users - Error connecting to DB")
+      console.log(`500 - GET /${Endpoints.SIGN_UP} - Error connecting to DB`)
       return {
         statusCode: 500,
         body: JSON.stringify({ message: 'Internal Server Error' })
@@ -66,7 +71,7 @@ export async function signUpHandler (
     const usersCollection = db.collection<UserDoc>(Entities.USERS);
     const foundUser = await usersCollection.findOne({ email: body.email });
     if (foundUser) {
-      console.log("409 - POST /users - User already exists")
+      console.log(`409 - POST /${Endpoints.SIGN_UP} - User already exists`)
       return {
         statusCode: 409,
         body: JSON.stringify({ message: 'Conflict' })
@@ -99,7 +104,8 @@ export async function signUpHandler (
       created_at: newUser.created_at,
       token: token
     }
-    
+
+    console.log(`200 - POST ${Endpoints.SIGN_UP} - Sign up successful`)
     await closeConnection();
     return {
       statusCode: 200,
@@ -115,13 +121,13 @@ export async function signUpHandler (
   }
 }
 
-export async function signInHandler (
+export async function signInHandler(
   event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> {
   // All log statements are written to CloudWatch
   console.debug('Received event:', event);
   if (event.body === null) {
-    console.log("400 - POST /rooms - Body is null")
+    console.log(`400 - POST ${Endpoints.SIGN_IN} - Body is null`)
     return {
       statusCode: 400,
       body: JSON.stringify({ message: 'Bad Request' })
@@ -133,7 +139,7 @@ export async function signInHandler (
 
   /** Checklist based on SignInDto */
   if (!body.email || !body.password) {
-    console.log("400 - POST /users - Missing required fields")
+    console.log(`400 - POST ${Endpoints.SIGN_IN} - Missing required fields`)
     return {
       statusCode: 400,
       body: JSON.stringify({ message: 'Bad Request' })
@@ -148,7 +154,7 @@ export async function signInHandler (
   try {
     const mongoClient = await getMongoClient();
     if (!mongoClient || !mongoClient.db || !mongoClient.closeConnection) {
-      console.log("500 - GET /users - Error connecting to DB")
+      console.log(`500 - GET ${Endpoints.SIGN_IN} - Error connecting to DB`)
       return {
         statusCode: 500,
         body: JSON.stringify({ message: 'Internal Server Error' })
@@ -160,7 +166,7 @@ export async function signInHandler (
     const usersCollection = db.collection<UserDoc>(Entities.USERS);
     const foundUser = await usersCollection.findOne({ email: userSignInData.email });
     if (!foundUser) {
-      console.log("404 - POST /users - User not found")
+      console.log(`404 - POST ${Endpoints.SIGN_IN} - User not found`)
       return {
         statusCode: 404,
         body: JSON.stringify({ message: 'Not Found' })
@@ -170,7 +176,7 @@ export async function signInHandler (
     // Check password
     const isPasswordMatch = await compare(userSignInData.password, foundUser.password);
     if (!isPasswordMatch) {
-      console.log("401 - POST /users - Password not match")
+      console.log(`401 - POST ${Endpoints.SIGN_IN} - Password not match`)
       return {
         statusCode: 401,
         body: JSON.stringify({ message: 'Unauthorized' })
@@ -190,7 +196,8 @@ export async function signInHandler (
       created_at: foundUser.created_at,
       token: token
     }
-    
+
+    console.log(`200 - POST ${Endpoints.SIGN_IN} - ${foundUser.email} signed in`)
     await closeConnection();
     return {
       statusCode: 200,
