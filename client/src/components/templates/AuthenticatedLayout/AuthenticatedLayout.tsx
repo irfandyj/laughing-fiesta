@@ -2,6 +2,8 @@ import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/i
 import { Layout, Menu } from 'antd';
 import React from 'react';
 
+import './AuthenticatedLayout.module.css'
+
 const { Content, Sider } = Layout;
 
 const AuthenticatedLayout: React.FC = (props) => {
