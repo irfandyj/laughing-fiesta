@@ -32,11 +32,11 @@ const JWT_SECRET = "secret";
 
 export class JwtPayload {
   sub: string;
-  name: string;
+  username: string;
   email: string;
-  constructor({ sub, name, email }: { sub: string, name: string, email: string }) {
+  constructor({ sub, username, email }: { sub: string, username: string, email: string }) {
     this.sub = sub;
-    this.name = name;
+    this.username = username;
     this.email = email;
   }
 }
@@ -67,12 +67,12 @@ export async function verifyJwtToken(token: string): Promise<JwtPayload> {
         if (
           typeof decoded === 'object' &&
           typeof decoded.sub === 'string' &&
-          typeof decoded.name === 'string' &&
+          typeof decoded.username === 'string' &&
           typeof decoded.email === 'string'
         ) {
           console.log("Token decoded!")
           console.log("Sub: ", decoded.sub)
-          console.log("Name: ", decoded.name)
+          console.log("username: ", decoded.username)
           console.log("Email: ", decoded.email)
           resolve(new JwtPayload(decoded as JwtPayload))
         }

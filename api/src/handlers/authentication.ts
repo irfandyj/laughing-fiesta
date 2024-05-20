@@ -16,7 +16,7 @@ enum Endpoints {
 
 /**
  * Notes to self, The Sign Up Flow:
- * 1. [x] User input name, email, password
+ * 1. [x] User input username, email, password
  * 2. [-] (Partial) We validate input, whether the property exist, character length, etc
  * 3. [x] Check if the user already exists
  * 4. [x] If not, we hash the password
@@ -47,7 +47,7 @@ export async function signUpHandler(
   const body = JSON.parse(event.body);
 
   /** Checklist based on SignUpDto */
-  if (!body.name || !body.email || !body.password) {
+  if (!body.username || !body.email || !body.password) {
     console.log(`400 - POST ${Endpoints.SIGN_UP} - Missing required fields`)
     return {
       statusCode: 400,
@@ -81,7 +81,7 @@ export async function signUpHandler(
     // Hashing password
     const hashedPassword = await hash(body.password);
     const newUser = {
-      name: body.name,
+      username: body.username,
       email: body.email,
       password: hashedPassword,
       rooms: [],
@@ -92,12 +92,12 @@ export async function signUpHandler(
 
     const token = await generateJwtToken({
       sub: result.insertedId.toString(),
-      name: newUser.name,
+      username: newUser.username,
       email: newUser.email
     })
     const signUpResponse: UserAuthenticationDto = {
       id: result.insertedId.toString(),
-      name: newUser.name,
+      username: newUser.username,
       email: newUser.email,
       rooms: [],
       created_at: newUser.created_at,
@@ -192,12 +192,12 @@ export async function signInHandler(
 
     const token = await generateJwtToken({
       sub: foundUser._id.toString(),
-      name: foundUser.name,
+      username: foundUser.username,
       email: foundUser.email
     })
     const signInResponse: UserAuthenticationDto = {
       id: foundUser._id.toString(),
-      name: foundUser.name,
+      username: foundUser.username,
       email: foundUser.email,
       rooms: foundUser.rooms,
       created_at: foundUser.created_at,

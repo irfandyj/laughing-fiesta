@@ -5,7 +5,7 @@ import { RoomDoc } from "./room";
  * Data Transfer Objects - Input
  */
 export interface SignUpDto {
-  name: string;
+  username: string;
   email: string;
   password: string;
 }
@@ -19,7 +19,7 @@ export interface SignInDto {
 */
 export interface UserAuthenticationDto {
   id: string;
-  name: string;
+  username: string;
   email: string;
   rooms: ObjectId[] | RoomDoc[];
   created_at: Date;

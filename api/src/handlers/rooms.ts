@@ -371,7 +371,7 @@ export async function postMessageToRoomHandler(
       room: new ObjectId(roomId),
       by: {
         id: jwtAuthResult.sub,
-        name: jwtAuthResult.name,
+        name: jwtAuthResult.username,
         email: jwtAuthResult.email
       },
       created_at: message.created_at,

@@ -43,7 +43,7 @@ export const getUsersHandler = async (
       query.limit = qs.limit ? parseInt(qs.limit) : 10;
       query.page = qs.page ? parseInt(qs.page) : 1;
 
-      // Allowed sorts should be name, email, created_at
+      // Allowed sorts should be username, email, created_at
       if (qs.sortBy) {
         const sortBy = qs.sortBy.split(",");
         if (sortBy.length !== 2) {
@@ -56,10 +56,10 @@ export const getUsersHandler = async (
         query.sortBy = sortBy as SortQuery;
       }
 
-      // Filter where name or email contains the query string
+      // Filter where username or email contains the query string
       query.filter = qs.filter ? {
         $or: [
-          { name: { $regex: qs.filter, $options: 'i' } },
+          { username: { $regex: qs.filter, $options: 'i' } },
           { email: { $regex: qs.filter, $options: 'i' } }
         ]
       } : {}
@@ -82,7 +82,7 @@ export const getUsersHandler = async (
     const usersResponse: GetResponse<UserDto> = {
       data: users.map(user => ({
         id: user._id,
-        name: user.name,
+        username: user.username,
         email: user.email,
         rooms: user.rooms,
         created_at: user.created_at
@@ -91,7 +91,7 @@ export const getUsersHandler = async (
         totalItems: totalDocuments,
         currentPage: query.page,
         totalPages: totalPages,
-        sortBy: [['name', 'ASC']],
+        sortBy: [['username', 'ASC']],
         limit: query.limit,
       },
       links: {
@@ -138,7 +138,7 @@ export async function postUserHandler(
    * Should checklist the body based on `CreateUserDto`
    */
   if (
-    typeof requestBody.name !== 'string' ||
+    typeof requestBody.username !== 'string' ||
     typeof requestBody.email !== 'string' ||
     typeof requestBody.password !== 'string'
   ) {
@@ -163,7 +163,7 @@ export async function postUserHandler(
 
     const usersCollection = db.collection<UserDoc>('users');
     const user = {
-      name: requestBody?.name,
+      username: requestBody?.username,
       email: requestBody?.email,
       password: 'randompass',
       rooms: [], // Should join the default room
@@ -173,7 +173,7 @@ export async function postUserHandler(
     const result = await usersCollection.insertOne(user);
     const userBodyResponse: UserDto = {
       id: result.insertedId.toString(),
-      name: requestBody.name,
+      username: requestBody.username,
       email: requestBody.email,
       rooms: [],
       created_at: user.created_at

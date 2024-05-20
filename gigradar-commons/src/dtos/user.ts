@@ -3,14 +3,14 @@ import { Query } from "../http/request";
 import { RoomDoc } from "./room";
 
 export interface UserAttrs {
-  name: string;
+  username: string;
   email: string;
   password: string;
   rooms: ObjectId[];
 }
 
 export interface UserDoc extends Document {
-  name: string;
+  username: string;
   email: string;
   password: string;
   rooms: ObjectId[];
@@ -24,7 +24,7 @@ export interface UserDoc extends Document {
 export interface IndexUserDto extends Query<UserDoc> {}
 
 export interface CreateUserDto {
-  name: string;
+  username: string;
   email: string;
   password: string;
   rooms: ObjectId[];
@@ -35,7 +35,7 @@ export interface CreateUserDto {
  */
 export interface UserDto {
   id: string;
-  name: string;
+  username: string;
   email: string;
   rooms: ObjectId[] | RoomDoc[];
   created_at: Date;

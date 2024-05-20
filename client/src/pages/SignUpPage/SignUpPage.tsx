@@ -7,7 +7,7 @@ import './SignUpPage.module.css'
 import { signUpFormFlow } from './SignUpPage.api';
 
 type FieldType = {
-  name: string;
+  username: string;
   email: string;
   password: string;
 };
@@ -16,7 +16,7 @@ export default function SignUpPage() {
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     try {
       const signUpRes = await signUpFormFlow({
-        name: values.name,
+        username: values.username,
         email: values.email,
         password: values.password
       })
@@ -47,8 +47,8 @@ export default function SignUpPage() {
         >
 
           <Form.Item<FieldType>
-            label="Name"
-            name="name"
+            label="Username"
+            name="username"
             className='w-full'
             rules={[{ required: true, message: 'Please input your name!' }]}
           >
