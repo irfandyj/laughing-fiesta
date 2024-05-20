@@ -11,7 +11,7 @@ const { Header, Content, Sider } = Layout;
 const { useBreakpoint } = Grid;
 
 const RoomDetailPage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { roomId } = useParams<{ roomId: string }>();
   const screens = useBreakpoint();
   // const { data, isLoading } = useRoomDetail(id);
 
@@ -29,7 +29,7 @@ const RoomDetailPage = () => {
         <Content className="flex flex-col">
           {/* <Layout> */}
           <Header>
-            <h1 className="RoomDetailPage__title">Room {id}</h1>
+            <h1 className="RoomDetailPage__title">Room {roomId}</h1>
           </Header>
           <Content className="flex flex-col flex-grow-1">
             {/* Chat Container */}
