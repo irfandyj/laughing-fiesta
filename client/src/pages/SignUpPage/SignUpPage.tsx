@@ -4,16 +4,23 @@ import type { FormProps } from 'antd';
 import { Card, Button, Form, Input } from 'antd';
 import 'antd-css-utilities/utility.min.css';
 import './SignUpPage.module.css'
+import { signUpFormFlow } from './SignUpPage.api';
 
 type FieldType = {
-  name?: string;
-  email?: string;
-  password?: string;
+  name: string;
+  email: string;
+  password: string;
 };
 
 export default function SignUpPage() {
-  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-    console.log('Success:', values);
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+    console.log('onFinish')
+    console.log('values', values)
+    await signUpFormFlow({
+      name: values.name,
+      email: values.email,
+      password: values.password
+    })
   };
 
   const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
@@ -22,7 +29,7 @@ export default function SignUpPage() {
   return (
     <Layout className='h-screen SignUpPage'>
 
-      <Card className='SignUpPage__card ma-auto '>
+      <Card className='SignUpPage__card ma-auto'>
         <h1>Sign Up</h1>
         <Form
           name="basic"
