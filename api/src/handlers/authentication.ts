@@ -109,6 +109,14 @@ export async function signUpHandler(
     await closeConnection();
     return {
       statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "X-Custom-Header": "application/json",
+        "Access-Control-Allow-Origin": "http://localhost:8000",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, PATCH, DELETE",
+        "Access-Control-Allow-Credentials": "true"
+      },
       body: JSON.stringify(signUpResponse)
     };
   } catch (e) {
