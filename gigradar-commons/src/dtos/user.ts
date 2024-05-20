@@ -1,5 +1,5 @@
 import { Document, ObjectId } from "mongodb";
-import { Query } from "../lib/request";
+import { Query } from "../http/request";
 import { RoomDoc } from "./room";
 
 export interface UserAttrs {

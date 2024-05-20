@@ -6,10 +6,10 @@ import {
 import { getMongoClient } from '../db/init';
 import { SORT_ORDER, SortQuery } from '../lib/request';
 import { GetResponse } from '../lib/response';
-import { RoomDoc, IndexRoomDto, RoomDto, RoomDetailsDto } from '../models/room';
+import { RoomDoc, IndexRoomDto, RoomDto, RoomDetailsDto } from 'gigradar-commons/build/dtos/room';
 import { Entities } from '../lib/entitites';
 import { ObjectId, UpdateFilter } from 'mongodb';
-import { MessageDoc, MessageDto } from '../models/message';
+import { MessageDoc, MessageDto } from 'gigradar-commons/build/dtos/message';
 import { JwtPayload, jwtAuthenticationMiddleware } from '../lib/authentication';
 
 const CLIENT_HOST = "http://localhost:3000"

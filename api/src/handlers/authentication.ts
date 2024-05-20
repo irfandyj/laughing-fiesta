@@ -4,10 +4,10 @@ import {
   APIGatewayProxyResult
 } from 'aws-lambda';
 import { getMongoClient } from '../db/init';
-import { UserDoc } from '../models/user';
+import { UserDoc } from 'gigradar-commons/build/dtos/user';
 import { Entities } from '../lib/entitites';
 import { compare, generateJwtToken, hash } from '../lib/authentication';
-import { SignInDto, UserAuthenticationDto } from '../models/authentication';
+import { SignInDto, UserAuthenticationDto } from 'gigradar-commons/build/dtos/authentication';
 
 
 /**
