@@ -10,6 +10,7 @@ export default defineConfig({
     { path: '/signup', component: '@/pages/SignUpPage/index' },
     { path: '/signin', component: '@/pages/SignInPage/index' },
   ],
+  dva: {},
   fastRefresh: {},
   plugins: []
 });
