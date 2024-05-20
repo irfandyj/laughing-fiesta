@@ -1,4 +1,4 @@
-import { Link } from 'umi';
+import { Link, history } from 'umi';
 import { Layout } from 'antd';
 import type { FormProps } from 'antd';
 import { Card, Button, Form, Input } from 'antd';
@@ -14,13 +14,19 @@ type FieldType = {
 
 export default function SignUpPage() {
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-    console.log('onFinish')
-    console.log('values', values)
-    await signUpFormFlow({
-      name: values.name,
-      email: values.email,
-      password: values.password
-    })
+    try {
+      const signUpRes = await signUpFormFlow({
+        name: values.name,
+        email: values.email,
+        password: values.password
+      })
+      if (!signUpRes) throw new Error("Sign up failed")
+
+      // Redirect to home page
+      history.push('/');
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {

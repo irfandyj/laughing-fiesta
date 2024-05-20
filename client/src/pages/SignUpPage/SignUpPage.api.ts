@@ -1,4 +1,4 @@
-import { api } from '@/lib/axios';
+import { api, replaceAuthorizationHeader } from '@/lib/axios';
 import { AxiosResponse } from 'axios';
 import { Endpoints as ApiEndpoints } from 'gigradar-commons/build/constants/endpoints';
 import { SignUpDto, UserAuthenticationDto } from 'gigradar-commons/build/dtos/authentication';
@@ -10,18 +10,24 @@ export async function signUp(signupData: SignUpDto) {
       headers: {
         'Content-Type': 'application/json'
       },
-      withCredentials: true
     })
 }
 
 export async function signUpFormFlow(data: SignUpDto) {
   try {
     const signUpRes = await signUp(data);
-    console.log(signUpRes.data);
-
+    
     // Successfuly sign up
     // Use the JWT for the axios
+    replaceAuthorizationHeader(signUpRes.data.token);
+
+    // Set personal data in app state
+    
     // Connect to a websocket
+    // Do websocket flow
+
+    // Return all necessary data
+    return signUpRes
   } catch (e) {
     console.error(e);
   }
