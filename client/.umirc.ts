@@ -7,10 +7,10 @@ export default defineConfig({
   routes: [
     {
       path: '/u/:username',
-      component: '@/components/templates/AuthenticatedLayout',
+      // component: '@/components/templates/EmptyLayout/index',
       routes: [
-        { path: '/', component: '@/pages/HomePage/index' },
-        { path: '/rooms/:id', component: '@/pages/RoomDetailPage/index' },
+        { path: '/u/:username', component: '@/pages/HomePage/index' },
+        { path: '/u/:username/rooms/:id', component: '@/pages/RoomDetailPage/index' },
       ],
     },
     { path: '/signup', component: '@/pages/SignUpPage/index' },
