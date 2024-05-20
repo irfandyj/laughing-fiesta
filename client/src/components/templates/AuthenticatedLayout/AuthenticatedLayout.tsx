@@ -4,10 +4,10 @@ import React from 'react';
 
 const { Content, Sider } = Layout;
 
-const App: React.FC = (props) => {
+const AuthenticatedLayout: React.FC = (props) => {
   const { children } = props;
   return (
-    <Layout className='HomePage'>
+    <Layout className='AuthenticatedLayout'>
       <Sider
         breakpoint="lg"
         collapsedWidth="0"
@@ -41,4 +41,4 @@ const App: React.FC = (props) => {
   );
 }
 
-export default App;
+export default AuthenticatedLayout;
