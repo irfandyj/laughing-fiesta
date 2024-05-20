@@ -3,7 +3,7 @@
  */
 import { Model } from '..';
 import { PROFILE_REDUCERS } from './profile.constants';
-import { ProfileModelType, ProfileModelState } from './profile.types';
+import { ProfileModelType, ProfileModelState, SavedProfilesInLocalStorage } from './profile.types';
 
 const ProfileModel: ProfileModelType = {
   namespace: Model.PROFILE,
@@ -17,6 +17,13 @@ const ProfileModel: ProfileModelType = {
 
   // Reducers
   reducers: {
+
+    /**
+     * Set the current chosen index profile
+     * @param state 
+     * @param action 
+     * @returns 
+     */
     [PROFILE_REDUCERS.SET_INDEX_PROFILE](state, action) {
       const currentState = { ...state } as ProfileModelState;
       return {
@@ -24,8 +31,41 @@ const ProfileModel: ProfileModelType = {
         profiles: currentState.profiles,
       };
     },
+
+    /**
+     * Replace the current profiles with the new `payload`
+     * @param state 
+     * @param action 
+     * @returns 
+     */
+    [PROFILE_REDUCERS.SET_PROFILES](state, action) {
+      const currentState = { ...state } as ProfileModelState;
+      // Store it in LocalStorage with the key 'profile'
+      // And type of [[username, token]]
+      const localStorageProfiles: SavedProfilesInLocalStorage = action.payload.map((profile) => [profile.username, profile.token]);
+      localStorage.setItem(Model.PROFILE, JSON.stringify(localStorageProfiles));
+      return {
+        currentChosenIndexProfile: currentState.currentChosenIndexProfile,
+        profiles: action.payload,
+      };
+    },
+
+    /**
+     * Add a new profile to the current profiles
+     * @param state 
+     * @param action 
+     * @returns 
+     */
     [PROFILE_REDUCERS.ADD_PROFILE](state, action) {
       const currentState = { ...state } as ProfileModelState;
+
+      this[PROFILE_REDUCERS.SET_PROFILES](
+        currentState,
+        {
+          type: PROFILE_REDUCERS.SET_PROFILES,
+          payload: [...currentState.profiles, action.payload]
+        }
+      );
       return {
         currentChosenIndexProfile: currentState.currentChosenIndexProfile,
         profiles: [...currentState.profiles, action.payload],
@@ -34,9 +74,9 @@ const ProfileModel: ProfileModelType = {
 
     // Effects
     // effects: {
-      // addProfile({ payload }, { call, put }) {
-      //   yield put({ type: 'addProfile', payload });
-      // }
+    // addProfile({ payload }, { call, put }) {
+    //   yield put({ type: 'addProfile', payload });
+    // }
     //   *queryUser({ payload }, { call, put }) {
     //     const { data } = yield call(queryUser, payload);
     //     yield put({ type: 'queryUserSuccess', payload: data });
