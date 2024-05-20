@@ -25,7 +25,7 @@ export async function signUpFormFlow(data: SignUpDto) {
 
     // Set personal data in app state
     getDvaApp()._store.dispatch({
-      type: PROFILE_ACTIONS.ADD_PROFILE,
+      type: PROFILE_ACTIONS.REDUCER_ADD_PROFILE,
       payload: signUpRes.data
     });
     
