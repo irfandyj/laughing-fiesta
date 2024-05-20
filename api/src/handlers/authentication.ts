@@ -8,11 +8,10 @@ import { UserDoc } from 'gigradar-commons/build/dtos/user';
 import { Entities } from '../lib/entitites';
 import { compare, generateJwtToken, hash } from '../lib/authentication';
 import { SignInDto, UserAuthenticationDto } from 'gigradar-commons/build/dtos/authentication';
-// import { Endpoints } from 'gigradar-commons/build/constants/endpoints';
 
 enum Endpoints {
-  SIGN_UP = 'signup',
-  SIGN_IN = 'signin'
+  SIGN_IN = "/signin",
+  SIGN_UP = "/signup"
 }
 
 /**
@@ -37,7 +36,7 @@ export async function signUpHandler(
   // All log statements are written to CloudWatch
   console.debug('Received event:', event);
   if (event.body === null) {
-    console.log(`400 - POST /${Endpoints.SIGN_UP} - Body is null`)
+    console.log(`400 - POST ${Endpoints.SIGN_UP} - Body is null`)
     return {
       statusCode: 400,
       body: JSON.stringify({ message: 'Bad Request' })
@@ -49,7 +48,7 @@ export async function signUpHandler(
 
   /** Checklist based on SignUpDto */
   if (!body.name || !body.email || !body.password) {
-    console.log(`400 - POST /${Endpoints.SIGN_UP} - Missing required fields`)
+    console.log(`400 - POST ${Endpoints.SIGN_UP} - Missing required fields`)
     return {
       statusCode: 400,
       body: JSON.stringify({ message: 'Bad Request' })
@@ -59,7 +58,7 @@ export async function signUpHandler(
   try {
     const mongoClient = await getMongoClient();
     if (!mongoClient || !mongoClient.db || !mongoClient.closeConnection) {
-      console.log(`500 - GET /${Endpoints.SIGN_UP} - Error connecting to DB`)
+      console.log(`500 - GET ${Endpoints.SIGN_UP} - Error connecting to DB`)
       return {
         statusCode: 500,
         body: JSON.stringify({ message: 'Internal Server Error' })
@@ -71,7 +70,7 @@ export async function signUpHandler(
     const usersCollection = db.collection<UserDoc>(Entities.USERS);
     const foundUser = await usersCollection.findOne({ email: body.email });
     if (foundUser) {
-      console.log(`409 - POST /${Endpoints.SIGN_UP} - User already exists`)
+      console.log(`409 - POST ${Endpoints.SIGN_UP} - User already exists`)
       return {
         statusCode: 409,
         body: JSON.stringify({ message: 'Conflict' })
