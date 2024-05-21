@@ -1,5 +1,5 @@
 import { Model } from '..';
-import { ProfileModelType, ProfileModelState, SavedProfilesInLocalStorage } from './profile.types';
+import { ProfileModelType, ProfileModelState, ProfileHashmap } from './profile.types';
 import { PROFILE_REDUCERS } from './profile.constants';
 
 const profileReducers: ProfileModelType['reducers'] = {
@@ -14,7 +14,7 @@ const profileReducers: ProfileModelType['reducers'] = {
     // I think when changing profile, you should replace the axios token here too.
     // Replacing it here only changes the one in the tab opened.
     return {
-      currentChosenIndexProfile: action.payload,
+      currentChosenUsername: action.payload,
       profiles: currentState.profiles,
     };
   },
@@ -37,10 +37,10 @@ const profileReducers: ProfileModelType['reducers'] = {
     const currentState = { ...state } as ProfileModelState;
     // Store it in LocalStorage with the key 'profile'
     // And type of [[username, token]]
-    const localStorageProfiles: SavedProfilesInLocalStorage = action.payload.map((profile) => [profile.username, profile.token]);
+    const localStorageProfiles: ProfileHashmap = action.payload; 
     localStorage.setItem(Model.PROFILE, JSON.stringify(localStorageProfiles));
     return {
-      currentChosenIndexProfile: currentState.currentChosenIndexProfile,
+      currentChosenUsername: currentState.currentChosenUsername,
       profiles: action.payload,
     };
   },
@@ -53,16 +53,21 @@ const profileReducers: ProfileModelType['reducers'] = {
    */
   [PROFILE_REDUCERS.ADD_PROFILE](state, action) {
     const currentState = { ...state } as ProfileModelState;
+
+    // Get current profiles in LocalStorage
+    const currentProfilesInLocalStorage: ProfileHashmap = JSON.parse(localStorage.getItem(Model.PROFILE) || '[]');
+
     // Store it in LocalStorage with the key 'profile'
-    // And type of [[username, token]]
-    const localStorageProfiles: SavedProfilesInLocalStorage = [
-      ...currentState.profiles,
-      action.payload
-    ].map((profile) => [profile.username, profile.token]);
-    localStorage.setItem(Model.PROFILE, JSON.stringify(localStorageProfiles));
+    currentProfilesInLocalStorage[action.payload.username] = {
+      id: action.payload.id,
+      username: action.payload.username,
+      email: action.payload.email,
+      token: action.payload.token,
+    };
+    localStorage.setItem(Model.PROFILE, JSON.stringify(currentProfilesInLocalStorage));
     return {
-      currentChosenIndexProfile: currentState.currentChosenIndexProfile,
-      profiles: [...currentState.profiles, action.payload],
+      currentChosenUsername: currentState.currentChosenUsername,
+      profiles: currentProfilesInLocalStorage,
     };
   }
 }

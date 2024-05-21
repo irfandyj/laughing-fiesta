@@ -13,7 +13,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
   return (
     <AuthenticatedLayout>
       <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-        Welcome, You, {profile.profiles[profile.currentChosenIndexProfile].username}!
+        Welcome, You, {profile.currentChosenUsername}!
       </div>
     </AuthenticatedLayout>
   );

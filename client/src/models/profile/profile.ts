@@ -3,16 +3,15 @@
  */
 import { Model } from '..';
 import { PROFILE_REDUCERS, PROFILE_EFFECTS } from './profile.constants';
-import { ProfileModelType } from './profile.types';
+import { ProfileModelType, ReducerAddProfileAction } from './profile.types';
 import { profileReducers } from './profile.reducers';
-
 
 const ProfileModel: ProfileModelType = {
   namespace: Model.PROFILE,
 
   state: {
-    currentChosenIndexProfile: 0,
-    profiles: [],
+    currentChosenUsername: '',
+    profiles: {},
   },
 
   // Getters
