@@ -17,11 +17,16 @@ export interface SignInDto {
 /**
  * Data Transfer Objects - Output
 */
+export interface UserAuthenticationRoomDto extends Partial<RoomDoc> {
+  id: string;
+  name: string;
+  description: string;
+}
 export interface UserAuthenticationDto {
   id: string;
   username: string;
   email: string;
-  rooms: ObjectId[] | RoomDoc[];
+  rooms: UserAuthenticationRoomDto[];
   created_at: Date;
   token: string;
 }

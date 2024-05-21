@@ -8,11 +8,9 @@ import { UserDoc } from 'gigradar-commons/build/dtos/user';
 import { Entities } from '../lib/entitites';
 import { compare, generateJwtToken, hash } from '../lib/authentication';
 import { SignInDto, UserAuthenticationDto } from 'gigradar-commons/build/dtos/authentication';
-
-enum Endpoints {
-  SIGN_IN = "/signin",
-  SIGN_UP = "/signup"
-}
+import { PushOperator } from 'mongodb';
+import { RoomDoc } from 'gigradar-commons/build/dtos/room';
+import { Endpoints } from 'gigradar-commons/build/constants/endpoints'
 
 /**
  * Notes to self, The Sign Up Flow:
@@ -82,16 +80,39 @@ export async function signUpHandler(
     // Create the user
     // Hashing password
     const hashedPassword = await hash(body.password);
+    const roomsCollection = db.collection<RoomDoc>(Entities.ROOMS);
+    const defaultRoom = await roomsCollection.findOne({ name: 'Default Room' });
+    if (!defaultRoom) {
+      console.log(`500 - POST ${Endpoints.SIGN_UP} - Default Room not found`)
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Internal Server Error' })
+      };
+    }
+
     const newUser = {
       username: body.username,
       email: body.email,
       password: hashedPassword,
-      rooms: [],
+      rooms: [defaultRoom._id],
       created_at: new Date(),
       updated_at: null
     }
     const result = await usersCollection.insertOne(newUser);
 
+    // Add the user to the default room
+    const updatedDefaultRoom = await roomsCollection.findOneAndUpdate(
+      { _id: defaultRoom._id }, {
+      $push: { users: result.insertedId } as unknown as PushOperator<RoomDoc>
+    })
+    if (!updatedDefaultRoom) {
+      console.log(`500 - POST ${Endpoints.SIGN_UP} - Error adding user to default room`)
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Internal Server Error' })
+      };
+    }
+    
     const token = await generateJwtToken({
       sub: result.insertedId.toString(),
       username: newUser.username,
@@ -101,7 +122,11 @@ export async function signUpHandler(
       id: result.insertedId.toString(),
       username: newUser.username,
       email: newUser.email,
-      rooms: [],
+      rooms: [{
+        id: defaultRoom._id.toString(),
+        name: defaultRoom.name,
+        description: defaultRoom.description
+      }],
       created_at: newUser.created_at,
       token: token
     }
@@ -198,11 +223,21 @@ export async function signInHandler(
       username: foundUser.username,
       email: foundUser.email
     })
+
+    // Get all rooms, this isn't the best way to do it, but it's fine for now
+    const roomsCollection = db.collection<RoomDoc>(Entities.ROOMS);
+    const rooms = await roomsCollection.find({ users: foundUser._id }).toArray();
+    const foundUserRooms = rooms.map(room => ({
+      id: room._id.toString(),
+      name: room.name,
+      description: room.description,
+    }))
+
     const signInResponse: UserAuthenticationDto = {
       id: foundUser._id.toString(),
       username: foundUser.username,
       email: foundUser.email,
-      rooms: foundUser.rooms,
+      rooms: foundUserRooms,
       created_at: foundUser.created_at,
       token: token
     }
