@@ -1,6 +1,6 @@
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import './AuthenticatedLayout.module.css'
 
@@ -8,6 +8,17 @@ const { Content, Sider } = Layout;
 
 const AuthenticatedLayout: React.FC = (props) => {
   const { children } = props;
+
+  useEffect(() => {
+    // Checks if the user is authenticated
+    // If user has no 'profile' in localStorage, redirect to login page
+    // If user has 'profile' in localStorage,
+      // Request the user's profile from the server
+        // If success, set the user's profile in localStorage
+          // Page stays the same
+        // If fail or expire token, redirect to login page
+  }, [])
+
   return (
     <Layout className='AuthenticatedLayout'>
       <Sider
