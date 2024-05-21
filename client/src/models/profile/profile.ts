@@ -34,9 +34,7 @@ const ProfileModel: ProfileModelType = {
      * @returns 
      */
     *[PROFILE_EFFECTS.ADD_PROFILE](action, effects) {
-      console.log(PROFILE_EFFECTS.ADD_PROFILE)
-      console.log(action, effects)
-      const { select, put } = effects;
+      const { put } = effects;
       yield put<ReducerAddProfileAction>({
         type: PROFILE_REDUCERS.ADD_PROFILE,
         payload: action.payload
