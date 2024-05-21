@@ -23,6 +23,11 @@ export const getRoomsHandler = async (
   // All log statements are written to CloudWatch
   console.debug('Received event:', event);
 
+  // Authenticate using JWT in `Authorization` header
+  const jwtAuthResult = await jwtAuthenticationMiddleware(event);
+  const isNotJwtPayload = !(jwtAuthResult instanceof JwtPayload);
+  if (isNotJwtPayload) return jwtAuthResult as APIGatewayProxyResult;
+
   try {
     const mongoClient = await getMongoClient();
     if (!mongoClient || !mongoClient.db || !mongoClient.closeConnection) {
@@ -128,6 +133,11 @@ export async function showRoomHandler(
   // All log statements are written to CloudWatch
   console.debug('Received event:', event);
 
+  // Authenticate using JWT in `Authorization` header
+  const jwtAuthResult = await jwtAuthenticationMiddleware(event);
+  const isNotJwtPayload = !(jwtAuthResult instanceof JwtPayload);
+  if (isNotJwtPayload) return jwtAuthResult as APIGatewayProxyResult;
+
   // Validates path parameters
   if (!event.pathParameters || !event.pathParameters.id) {
     console.log("400 - GET /rooms - Room ID is not provided")
@@ -191,6 +201,12 @@ export async function postRoomHandler(
 ): Promise<APIGatewayProxyResult> {
   // All log statements are written to CloudWatch
   console.debug('Received event:', event);
+
+  // Authenticate using JWT in `Authorization` header
+  const jwtAuthResult = await jwtAuthenticationMiddleware(event);
+  const isNotJwtPayload = !(jwtAuthResult instanceof JwtPayload);
+  if (isNotJwtPayload) return jwtAuthResult as APIGatewayProxyResult;
+
   if (event.body === null) {
     console.log("400 - POST /rooms - Body is null")
     return {
