@@ -3,12 +3,13 @@ import { Action, Reducer, } from 'umi';
 import { EffectsCommandMap } from 'dva';
 import { PROFILE_EFFECTS, PROFILE_REDUCERS } from './profile.constants';
 import { Model } from '..';
+import { AuthenticatedAxios } from "@/lib/axios";
 
 /**
  * Saved profiles in LocalStorage
  * @example [['username', 'token'], ['username2', 'token2']]
  */
-export type ProfileHashmap = {
+export type ProfileHashmapLocalStorage = {
   [username: string]: {
     id: string;
     username: string;
@@ -17,29 +18,42 @@ export type ProfileHashmap = {
   }
 };
 
+export type Profile = {
+  id: string;
+  username: string;
+  email: string;
+  api: AuthenticatedAxios;
+}
+export type ProfileHashmap = {
+  [username: string]: Profile
+}
+
+// State
 export interface ProfileModelState {
   currentChosenUsername: string; // The username of the current chosen profile
   profiles: ProfileHashmap;
 }
 
-// Reducers Actions
+// Reducer Actions
+export type ReducerProfileActionPayload = UserAuthenticationDto & Profile
+export type ReducerProfileHHashmapActionPayload = {
+  [username: string]: ReducerProfileActionPayload
+} 
+
 export interface SetChosenUsernameProfileAction extends Action {
   type: PROFILE_REDUCERS.SET_INDEX_PROFILE;
   payload: string;
 }
-export type SetProfileActionPayload = {
-  [username: string]: UserAuthenticationDto
-}
 export interface SetProfileAction extends Action {
   type: PROFILE_REDUCERS.SET_PROFILES;
-  payload: SetProfileActionPayload;
+  payload: ReducerProfileHHashmapActionPayload;
 }
 export interface ReducerAddProfileAction extends Action {
   type: PROFILE_REDUCERS.ADD_PROFILE;
-  payload: UserAuthenticationDto;
+  payload: ReducerProfileActionPayload;
 }
 
-// Effects Actions
+// Effect Actions
 export interface AddProfileAction extends Action {
   type: PROFILE_EFFECTS.ADD_PROFILE;
   payload: UserAuthenticationDto;

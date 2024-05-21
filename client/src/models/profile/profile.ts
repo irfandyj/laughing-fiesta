@@ -3,8 +3,9 @@
  */
 import { Model } from '..';
 import { PROFILE_REDUCERS, PROFILE_EFFECTS } from './profile.constants';
-import { ProfileModelType, ReducerAddProfileAction } from './profile.types';
+import { Profile, ProfileModelType, ReducerAddProfileAction } from './profile.types';
 import { profileReducers } from './profile.reducers';
+import { createAxios } from '@/lib/axios';
 
 const ProfileModel: ProfileModelType = {
   namespace: Model.PROFILE,
@@ -35,14 +36,19 @@ const ProfileModel: ProfileModelType = {
      */
     *[PROFILE_EFFECTS.ADD_PROFILE](action, effects) {
       const { put } = effects;
+      const profile = {
+        ...action.payload,
+        api: createAxios(action.payload.token)
+      };
+
       yield put<ReducerAddProfileAction>({
         type: PROFILE_REDUCERS.ADD_PROFILE,
-        payload: action.payload
+        payload: profile
       });
       // Uses the latest index
       yield put({
         type: PROFILE_REDUCERS.SET_INDEX_PROFILE,
-        payload: action.payload.username
+        payload: profile.username
       });
 
       // this.reducers[PROFILE_REDUCERS.SET_PROFILES](
