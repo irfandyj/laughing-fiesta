@@ -89,12 +89,23 @@ export async function jwtAuthenticationMiddleware(
   event: APIGatewayProxyEvent
 ): Promise<JwtPayload | APIGatewayProxyResult> {
   if (!event.headers.Authorization) {
-    console.log("401 - POST /rooms/{id}/messages - Unauthorized")
+    console.log("401 - No Authorization Header - Unauthorized")
     return {
       statusCode: 401,
       body: JSON.stringify({ message: 'Unauthorized' })
     };
   }
   const token = event.headers.Authorization.replace('Bearer ', '');
-  return verifyJwtToken(token);
+
+  try {
+    const payload = await verifyJwtToken(token);
+    return payload;
+  } catch (e) {
+    console.error(e)
+    console.log("401 - Failed to verify token - Unauthorized")
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ message: 'Unauthorized' })
+    };
+  }
 }
