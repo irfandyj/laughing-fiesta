@@ -3,7 +3,7 @@
  */
 import { Model } from '..';
 import { PROFILE_REDUCERS, PROFILE_EFFECTS } from './profile.constants';
-import { Profile, ProfileModelType, ReducerAddProfileAction } from './profile.types';
+import { ProfileModelType, ReducerAddProfileAction, SetProfileAction } from './profile.types';
 import { profileReducers } from './profile.reducers';
 import { createAxios } from '@/lib/axios';
 
@@ -29,6 +29,33 @@ const ProfileModel: ProfileModelType = {
   effects: {
 
     /**
+     * Setup the current profile
+     */
+    *[PROFILE_EFFECTS.SETUP_PROFILES](action, effects) {
+      const { put } = effects;
+      const profiles = Object.keys(action.payload)
+        .reduce((acc, username) => {
+          acc[username] = {
+            ...action.payload[username],
+            rooms: [],
+            api: createAxios(action.payload[username].token)
+          };
+          return acc;
+        }, {} as SetProfileAction['payload']);
+      yield put<SetProfileAction>({
+        type: PROFILE_REDUCERS.SET_PROFILES,
+        payload: profiles
+      });
+
+      // Set the first profile as the current profile
+      const firstProfile = Object.keys(profiles)[0];
+      yield put({
+        type: PROFILE_REDUCERS.SET_INDEX_PROFILE,
+        payload: firstProfile
+      });
+    },
+
+    /**
      * Add a new profile to the current profiles
      * @param state 
      * @param action 
@@ -38,6 +65,9 @@ const ProfileModel: ProfileModelType = {
       const { put } = effects;
       const profile = {
         ...action.payload,
+        // Do this again later.
+        // rooms: action.payload.rooms as string[],
+        rooms: action.payload.rooms as any,
         api: createAxios(action.payload.token)
       };
 
@@ -50,26 +80,9 @@ const ProfileModel: ProfileModelType = {
         type: PROFILE_REDUCERS.SET_INDEX_PROFILE,
         payload: profile.username
       });
-
-      // this.reducers[PROFILE_REDUCERS.SET_PROFILES](
-      //   currentState,
-      //   {
-      //     type: PROFILE_REDUCERS.SET_PROFILES,
-      //     payload: [...currentState.profiles, action.payload]
-      //   }
-      // );
-      // return {
-      //   currentChosenUsername: currentState.currentChosenUsername,
-      //   profiles: [...currentState.profiles, action.payload],
-      // };
     },
-    // addProfile({ payload }, { call, put }) {
-    //   yield put({ type: 'addProfile', payload });
-    // }
-    //   *queryUser({ payload }, { call, put }) {
-    //     const { data } = yield call(queryUser, payload);
-    //     yield put({ type: 'queryUserSuccess', payload: data });
-    //   },
+
+
   },
 
 

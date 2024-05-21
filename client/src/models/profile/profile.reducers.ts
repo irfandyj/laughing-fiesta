@@ -1,5 +1,5 @@
 import { Model } from '..';
-import { ProfileModelType, ProfileModelState, ProfileHashmapLocalStorage } from './profile.types';
+import { ProfileModelType, ProfileModelState, ProfileHashmapLocalStorage, ProfileHashmap } from './profile.types';
 import { PROFILE_REDUCERS } from './profile.constants';
 
 const profileReducers: ProfileModelType['reducers'] = {
@@ -36,22 +36,25 @@ const profileReducers: ProfileModelType['reducers'] = {
   [PROFILE_REDUCERS.SET_PROFILES](state, action) {
     const currentState = { ...state } as ProfileModelState;
     // Store it in LocalStorage with the key 'profile'
-    // And type of [[username, token]]
-    // const localStorageProfiles: ProfileHashmapLocalStorage = action.payload; 
-    const localStorageProfiles: ProfileHashmapLocalStorage = Object.keys(action.payload)
-      .reduce((acc, key: string) => {
-        acc[key] = {
-          id: action.payload[key].id,
-          username: action.payload[key].username,
-          email: action.payload[key].email,
-          token: action.payload[key].token,
-        };
-        return acc;
-      }, {} as ProfileHashmapLocalStorage); 
+    const localStorageProfiles = {} as ProfileHashmapLocalStorage;
+    const profileState = {} as ProfileHashmap;
+    for (let i=0; i<Object.keys(action.payload).length; i++) {
+      const key = Object.keys(action.payload)[i];
+      localStorageProfiles[key] = {
+        id: action.payload[key].id,
+        username: action.payload[key].username,
+        email: action.payload[key].email,
+        token: action.payload[key].token,
+      };
+      profileState[key] = {
+        ...action.payload[key],
+        api: action.payload[key].api,
+      };
+    } 
     localStorage.setItem(Model.PROFILE, JSON.stringify(localStorageProfiles));
     return {
       currentChosenUsername: currentState.currentChosenUsername,
-      profiles: action.payload,
+      profiles: profileState,
     };
   },
 

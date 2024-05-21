@@ -22,6 +22,8 @@ export type Profile = {
   id: string;
   username: string;
   email: string;
+  rooms: string[];
+  token: string;
   api: AuthenticatedAxios;
 }
 export type ProfileHashmap = {
@@ -35,7 +37,7 @@ export interface ProfileModelState {
 }
 
 // Reducer Actions
-export type ReducerProfileActionPayload = UserAuthenticationDto & Profile
+export type ReducerProfileActionPayload = Profile
 export type ReducerProfileHHashmapActionPayload = {
   [username: string]: ReducerProfileActionPayload
 } 
@@ -54,11 +56,20 @@ export interface ReducerAddProfileAction extends Action {
 }
 
 // Effect Actions
+
+// Add Profile
 export interface AddProfileAction extends Action {
   type: PROFILE_EFFECTS.ADD_PROFILE;
   payload: UserAuthenticationDto;
 }
 export type AddProfileEffect = (action: AddProfileAction, effects: EffectsCommandMap) => void;
+
+// Setup Profiles
+export interface SetupProfilesAction extends Action {
+  type: PROFILE_EFFECTS.SETUP_PROFILES;
+  payload: ProfileHashmapLocalStorage;
+}
+export type SetupProfilesEffect = (action: SetupProfilesAction, effects: EffectsCommandMap) => void;
 
 // Model
 export interface ProfileModelType {
@@ -72,6 +83,7 @@ export interface ProfileModelType {
   };
   effects: {
     [PROFILE_EFFECTS.ADD_PROFILE]: AddProfileEffect,
+    [PROFILE_EFFECTS.SETUP_PROFILES]: SetupProfilesEffect,
     //   queryUser: Effect;
   };
   // subscriptions: { setup: Subscription };
