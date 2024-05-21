@@ -172,9 +172,7 @@ export async function signInHandler(
     // Get the users collection
     const usersCollection = db.collection<UserDoc>(Entities.USERS);
     // Find one with same email OR same username
-    const foundUser = await usersCollection.findOne({
-      $or: [{ email: userSignInData.email }, { username: userSignInData.email }]
-    })
+    const foundUser = await usersCollection.findOne({ email: userSignInData.email })
     if (!foundUser) {
       console.log(`404 - POST ${Endpoints.SIGN_IN} - User not found`)
       return {
