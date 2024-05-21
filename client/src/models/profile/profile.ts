@@ -34,9 +34,18 @@ const ProfileModel: ProfileModelType = {
      * @returns 
      */
     *[PROFILE_EFFECTS.ADD_PROFILE](action, effects) {
-      const { put } = effects;
-
-      // const currentState = { ...state } as ProfileModelState;
+      console.log(PROFILE_EFFECTS.ADD_PROFILE)
+      console.log(action, effects)
+      const { select, put } = effects;
+      yield put<ReducerAddProfileAction>({
+        type: PROFILE_REDUCERS.ADD_PROFILE,
+        payload: action.payload
+      });
+      // Uses the latest index
+      yield put({
+        type: PROFILE_REDUCERS.SET_INDEX_PROFILE,
+        payload: action.payload.username
+      });
 
       // this.reducers[PROFILE_REDUCERS.SET_PROFILES](
       //   currentState,
@@ -46,7 +55,7 @@ const ProfileModel: ProfileModelType = {
       //   }
       // );
       // return {
-      //   currentChosenIndexProfile: currentState.currentChosenIndexProfile,
+      //   currentChosenUsername: currentState.currentChosenUsername,
       //   profiles: [...currentState.profiles, action.payload],
       // };
     },
