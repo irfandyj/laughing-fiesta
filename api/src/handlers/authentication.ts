@@ -68,7 +68,9 @@ export async function signUpHandler(
 
     // Get the users collection
     const usersCollection = db.collection<UserDoc>(Entities.USERS);
-    const foundUser = await usersCollection.findOne({ email: body.email });
+    const foundUser = await usersCollection.findOne({
+      $or: [{ email: body.email }, { username: body.username }]
+    })
     if (foundUser) {
       console.log(`409 - POST ${Endpoints.SIGN_UP} - User already exists`)
       return {
