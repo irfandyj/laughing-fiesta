@@ -8,6 +8,7 @@ import { GetResponse } from '../lib/response';
 import { IndexUserDto, UserDoc, UserDto } from 'gigradar-commons/build/dtos/user';
 import { SORT_ORDER, SortQuery } from '../lib/request';
 import { Entities } from '../lib/entitites';
+import { JwtPayload, jwtAuthenticationMiddleware } from '../lib/authentication';
 
 const CLIENT_HOST = "http://localhost:3000"
 
@@ -19,6 +20,11 @@ export const getUsersHandler = async (
 ): Promise<APIGatewayProxyResult> => {
   // All log statements are written to CloudWatch
   console.debug('Received event:', event);
+
+  // Authenticate using JWT in `Authorization` header
+  const jwtAuthResult = await jwtAuthenticationMiddleware(event);
+  const isNotJwtPayload = !(jwtAuthResult instanceof JwtPayload);
+  if (isNotJwtPayload) return jwtAuthResult as APIGatewayProxyResult;
 
   try {
     const mongoClient = await getMongoClient();
@@ -102,7 +108,7 @@ export const getUsersHandler = async (
         last: `${CLIENT_HOST}/users?limit=${query.limit}&page=${totalPages}`,
       }
     }
-    
+
     await closeConnection();
     return {
       statusCode: 200,
@@ -123,6 +129,12 @@ export async function postUserHandler(
 ): Promise<APIGatewayProxyResult> {
   // All log statements are written to CloudWatch
   console.debug('Received event:', event);
+
+  // Authenticate using JWT in `Authorization` header
+  const jwtAuthResult = await jwtAuthenticationMiddleware(event);
+  const isNotJwtPayload = !(jwtAuthResult instanceof JwtPayload);
+  if (isNotJwtPayload) return jwtAuthResult as APIGatewayProxyResult;
+
   if (event.body === null) {
     console.log("400 - POST /users - Body is null")
     return {
