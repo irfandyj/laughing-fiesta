@@ -55,7 +55,8 @@ const profileReducers: ProfileModelType['reducers'] = {
     const currentState = { ...state } as ProfileModelState;
 
     // Get current profiles in LocalStorage
-    const currentProfilesInLocalStorage: ProfileHashmap = JSON.parse(localStorage.getItem(Model.PROFILE) || '[]');
+    const currentProfilesInLocalStorage: ProfileHashmap =
+      JSON.parse(localStorage.getItem(Model.PROFILE) || '{}');
 
     // Store it in LocalStorage with the key 'profile'
     currentProfilesInLocalStorage[action.payload.username] = {
