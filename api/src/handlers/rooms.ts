@@ -10,7 +10,7 @@ import { RoomDoc, IndexRoomDto, RoomDto, RoomDetailsDto } from '@gigradar/common
 import { Entities } from '../lib/entitites';
 import { ObjectId, UpdateFilter } from 'mongodb';
 import { MessageDoc, MessageDto } from '@gigradar/commons/build/dtos/message';
-import { JwtPayload, jwtAuthenticationMiddleware } from '../lib/authentication';
+import { JwtPayload, jwtAuthenticationMiddleware } from '@gigradar/commons/build/lib/jwt';
 
 const CLIENT_HOST = "http://localhost:3000"
 

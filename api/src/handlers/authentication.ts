@@ -6,12 +6,17 @@ import {
 import { getMongoClient } from '../db/init';
 import { UserDoc } from '@gigradar/commons/build/dtos/user';
 import { Entities } from '../lib/entitites';
-import { compare, generateJwtToken, hash } from '../lib/authentication';
+import { compare, hash } from '../lib/authentication';
+import { generateJwtToken } from '@gigradar/commons/build/lib/jwt';
 import { SignInDto, UserAuthenticationDto } from '@gigradar/commons/build/dtos/authentication';
 import { PushOperator } from 'mongodb';
 import { RoomDoc } from '@gigradar/commons/build/dtos/room';
-import { Endpoints } from '@gigradar/commons/build/constants/endpoints'
+// import { Endpoints } from '@gigradar/commons/build/constants/endpoints'
 
+enum Endpoints {
+  SIGN_IN = '/signin',
+  SIGN_UP = '/signup',
+}
 /**
  * Notes to self, The Sign Up Flow:
  * 1. [x] User input username, email, password
