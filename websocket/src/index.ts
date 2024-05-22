@@ -1,5 +1,5 @@
 import { createServer } from './server';
-import { createWebSocketServer } from './websocket';
+import { createWebSocketServer } from './websockets';
 
 async function main() {
   try {
