@@ -5,7 +5,7 @@ import {
 } from 'aws-lambda';
 import { getMongoClient } from '../db/init';
 import { GetResponse } from '../lib/response';
-import { IndexUserDto, UserDoc, UserDto } from 'gigradar-commons/build/dtos/user';
+import { IndexUserDto, UserDoc, UserDto } from '@gigradar/commons/build/dtos/user';
 import { SORT_ORDER, SortQuery } from '../lib/request';
 import { Entities } from '../lib/entitites';
 import { JwtPayload, jwtAuthenticationMiddleware } from '../lib/authentication';

@@ -4,13 +4,13 @@ import {
   APIGatewayProxyResult
 } from 'aws-lambda';
 import { getMongoClient } from '../db/init';
-import { UserDoc } from 'gigradar-commons/build/dtos/user';
+import { UserDoc } from '@gigradar/commons/build/dtos/user';
 import { Entities } from '../lib/entitites';
 import { compare, generateJwtToken, hash } from '../lib/authentication';
-import { SignInDto, UserAuthenticationDto } from 'gigradar-commons/build/dtos/authentication';
+import { SignInDto, UserAuthenticationDto } from '@gigradar/commons/build/dtos/authentication';
 import { PushOperator } from 'mongodb';
-import { RoomDoc } from 'gigradar-commons/build/dtos/room';
-import { Endpoints } from 'gigradar-commons/build/constants/endpoints'
+import { RoomDoc } from '@gigradar/commons/build/dtos/room';
+import { Endpoints } from '@gigradar/commons/build/constants/endpoints'
 
 /**
  * Notes to self, The Sign Up Flow:

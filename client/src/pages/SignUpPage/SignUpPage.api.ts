@@ -1,8 +1,8 @@
 import { api, replaceAuthorizationHeader } from '@/lib/axios';
 import { PROFILE_ACTIONS } from '@/models/profile/profile.constants';
 import { AxiosResponse } from 'axios';
-import { Endpoints as ApiEndpoints } from 'gigradar-commons/build/constants/endpoints';
-import { SignUpDto, UserAuthenticationDto } from 'gigradar-commons/build/dtos/authentication';
+import { Endpoints as ApiEndpoints } from '@gigradar/commons/build/constants/endpoints';
+import { SignUpDto, UserAuthenticationDto } from '@gigradar/commons/build/dtos/authentication';
 import { getDvaApp } from 'umi';
 
 type SignUpResponse = AxiosResponse<UserAuthenticationDto>;
